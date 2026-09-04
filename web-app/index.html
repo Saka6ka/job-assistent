@@ -1,0 +1,2266 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>求职助 · 应届生求职教练工作台</title>
+<style>
+  :root{
+    --primary:#3a5ccc; --primary-2:#5b7ef0; --primary-soft:#eef2ff;
+    --ink:#1a2233; --muted:#6b7280; --line:#e5e9f2;
+    --bg:#f4f6fb; --card:#ffffff;
+    --green:#22a06b; --green-soft:#e7f6ef;
+    --orange:#e08600; --orange-soft:#fff4e0;
+    --red:#e5484d; --red-soft:#fdecec;
+    --radius:14px; --shadow:0 1px 2px rgba(20,30,60,.04),0 8px 24px rgba(20,30,60,.06);
+    --mono:"SFMono-Regular",Consolas,"Liberation Mono",monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    background:var(--bg);color:var(--ink);font-size:14px;line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  .app{display:flex;min-height:100vh}
+  /* sidebar */
+  .side{
+    width:220px;flex:0 0 220px;background:#141b2e;color:#c9d3ea;
+    display:flex;flex-direction:column;position:sticky;top:0;height:100vh;
+  }
+  .brand{padding:22px 20px 16px;border-bottom:1px solid rgba(255,255,255,.08)}
+  .brand .logo{font-size:17px;font-weight:700;color:#fff;letter-spacing:.5px}
+  .brand .logo span{color:#7b96ff}
+  .brand .sub{font-size:11px;color:#8b96b3;margin-top:3px}
+  .nav{flex:1;padding:12px 10px}
+  .nav a{
+    display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:9px;
+    color:#b9c3de;text-decoration:none;font-size:13.5px;margin-bottom:3px;cursor:pointer;
+    transition:.15s;
+  }
+  .nav a:hover{background:rgba(255,255,255,.06);color:#fff}
+  .nav a.active{background:var(--primary);color:#fff;font-weight:600}
+  .nav a .ic{width:18px;text-align:center;font-size:15px}
+  .side-foot{padding:14px 18px;border-top:1px solid rgba(255,255,255,.08);font-size:11px;color:#77819f;line-height:1.5}
+  /* main */
+  .main{flex:1;min-width:0;padding:28px 34px 60px;max-width:1180px}
+  .page{display:none}
+  .page.active{display:block;animation:fade .25s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+  h1.title{font-size:22px;font-weight:700;margin-bottom:4px}
+  .desc{color:var(--muted);font-size:13px;margin-bottom:22px}
+  h2.sec{font-size:15px;font-weight:700;margin:26px 0 12px;display:flex;align-items:center;gap:8px}
+  h2.sec::before{content:"";width:4px;height:15px;background:var(--primary);border-radius:2px}
+  .grid{display:grid;gap:16px}
+  .g2{grid-template-columns:repeat(2,1fr)}
+  .g3{grid-template-columns:repeat(3,1fr)}
+  .g4{grid-template-columns:repeat(4,1fr)}
+  @media(max-width:900px){.g2,.g3,.g4{grid-template-columns:1fr 1fr}}
+  @media(max-width:640px){.g2,.g3,.g4{grid-template-columns:1fr}.side{display:none}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow)}
+  .card h3{font-size:14px;font-weight:700;margin-bottom:10px}
+  .card h3 .tag{font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;margin-left:6px;vertical-align:1px}
+  .tag.blue{background:var(--primary-soft);color:var(--primary)}
+  .tag.green{background:var(--green-soft);color:var(--green)}
+  .tag.orange{background:var(--orange-soft);color:var(--orange)}
+  .tag.red{background:var(--red-soft);color:var(--red)}
+  .muted{color:var(--muted)}
+  .small{font-size:12px}
+  /* controls */
+  label.f{display:block;font-size:12.5px;font-weight:600;margin-bottom:6px;color:#374151}
+  select,input[type=text],textarea{
+    width:100%;border:1px solid var(--line);border-radius:9px;padding:9px 11px;
+    font-size:13.5px;font-family:inherit;color:var(--ink);background:#fff;outline:none;transition:.15s;
+  }
+  select:focus,input:focus,textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-soft)}
+  textarea{resize:vertical;line-height:1.55}
+  .btn{
+    display:inline-flex;align-items:center;gap:7px;border:none;border-radius:9px;cursor:pointer;
+    font-size:13.5px;font-weight:600;padding:10px 18px;font-family:inherit;transition:.15s;
+  }
+  .btn.primary{background:var(--primary);color:#fff}
+  .btn.primary:hover{background:#2f4bb0}
+  .btn.ghost{background:#fff;border:1px solid var(--line);color:var(--ink)}
+  .btn.ghost:hover{border-color:var(--primary);color:var(--primary)}
+  .btn.soft{background:var(--primary-soft);color:var(--primary)}
+  .btn:disabled{opacity:.5;cursor:not-allowed}
+  .row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end}
+  .row>.grow{flex:1;min-width:180px}
+  /* score bar */
+  .score-wrap{display:flex;align-items:center;gap:14px}
+  .big-score{font-size:44px;font-weight:800;line-height:1}
+  .bar{height:8px;border-radius:6px;background:#edf0f7;overflow:hidden;flex:1}
+  .bar>i{display:block;height:100%;border-radius:6px;background:var(--primary)}
+  .dim-table{width:100%;border-collapse:collapse;font-size:13px}
+  .dim-table th,.dim-table td{padding:9px 10px;text-align:left;border-bottom:1px solid var(--line)}
+  .dim-table th{font-size:12px;color:var(--muted);font-weight:600}
+  .dim-table tr:last-child td{border-bottom:none}
+  .pill{display:inline-block;font-size:11.5px;font-weight:600;padding:2px 9px;border-radius:20px;white-space:nowrap}
+  .pill.ok{background:var(--green-soft);color:var(--green)}
+  .pill.mid{background:var(--orange-soft);color:var(--orange)}
+  .pill.low{background:var(--red-soft);color:var(--red)}
+  .kw{display:inline-block;font-size:11.5px;padding:2px 8px;border-radius:6px;margin:0 4px 4px 0}
+  .kw.hit{background:var(--green-soft);color:var(--green)}
+  .kw.miss{background:var(--red-soft);color:var(--red)}
+  .kw.both{background:var(--primary-soft);color:var(--primary)}
+  /* notice */
+  .notice{border-left:4px solid var(--primary);background:var(--primary-soft);padding:10px 14px;border-radius:0 9px 9px 0;font-size:13px;color:#2f4bb0;margin:12px 0}
+  .notice.warn{border-color:var(--orange);background:var(--orange-soft);color:#a36100}
+  /* interview */
+  .q-item{border:1px solid var(--line);border-radius:11px;padding:14px 16px;margin-bottom:12px;background:#fff}
+  .q-item .q{font-weight:600;font-size:13.5px}
+  .q-item .meta{font-size:12px;color:var(--muted);margin-top:4px;display:flex;gap:14px;flex-wrap:wrap}
+  .ans{display:none;margin-top:12px;background:#fafbfe;border-radius:9px;padding:12px 14px;font-size:13px;color:#333d52;border:1px solid var(--line)}
+  .ans.open{display:block}
+  .chip{display:inline-block;font-size:12px;padding:6px 14px;border-radius:20px;border:1px solid var(--line);cursor:pointer;background:#fff;color:#374151;transition:.15s}
+  .chip.active{background:var(--primary);border-color:var(--primary);color:#fff}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+  /* resume preview */
+  .resume-preview{
+    background:#fff;border:1px solid var(--line);border-radius:12px;padding:26px 30px;
+    font-size:13.5px;box-shadow:var(--shadow);max-width:760px;margin:0 auto;
+  }
+  .resume-preview .rhead{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:6px}
+  .resume-preview .rname{font-size:24px;font-weight:800}
+  .resume-preview .rjob{font-size:14px;color:var(--primary);font-weight:600;margin-top:2px}
+  .resume-preview .rinfo{font-size:12.5px;color:var(--muted);line-height:1.9}
+  .resume-preview .rphoto{width:86px;height:108px;object-fit:cover;border-radius:6px;background:#eef1f7;flex:0 0 86px}
+  .resume-preview h4{font-size:14px;font-weight:700;margin:18px 0 8px;padding-bottom:5px;border-bottom:1.5px solid var(--primary);display:flex;justify-content:space-between;gap:10px}
+  .resume-preview h4 .right{font-weight:500;color:var(--muted);font-size:12.5px}
+  .resume-preview ul{padding-left:20px}
+  .resume-preview li{margin:4px 0}
+  .resume-preview .eval{text-indent:2em}
+  @media print{
+    .side,.toolbar,{display:none!important}
+    body{background:#fff}
+    .main{padding:0}
+    .resume-preview{border:none;box-shadow:none;max-width:100%}
+  }
+  .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+  .hidden{display:none!important}
+  .spinner{width:22px;height:22px;border:3px solid var(--primary-soft);border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite;flex:none}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .center{text-align:center}
+  .mt8{margin-top:8px}.mt16{margin-top:16px}.mb16{margin-bottom:16px}
+  /* ===== 总览 ===== */
+  .hero{display:flex;gap:26px;align-items:center;flex-wrap:wrap;justify-content:space-between}
+  .hero-left{flex:1 1 400px;min-width:270px}
+  .hero-eyebrow{display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.05em;color:var(--primary);background:var(--primary-soft);padding:4px 12px;border-radius:20px;margin-bottom:10px}
+  .hero-title{font-size:27px;font-weight:800;letter-spacing:-.5px;margin:0 0 7px}
+  .hero-sub{color:var(--muted);font-size:13.5px;line-height:1.75;margin:0;max-width:680px}
+  .hero-stats{display:flex;gap:24px;flex-wrap:wrap}
+  .hero-stats>div{display:flex;flex-direction:column;gap:1px}
+  .hero-stats b{font-size:19px;font-weight:800;color:var(--primary);line-height:1.15}
+  .hero-stats span{font-size:11.5px;color:var(--muted)}
+  /* 求职者画像（紧凑） */
+  .pm-name{font-size:16px;font-weight:800;margin-bottom:3px}
+  .pm-name span{font-size:12px;font-weight:600;color:var(--muted);margin-left:8px}
+  .pm-line{font-size:12.5px;color:var(--muted);line-height:1.85}
+  .pm-tags{margin-top:9px;display:flex;gap:6px;flex-wrap:wrap}
+  /* 核心流程图 */
+  .fm{display:flex;flex-direction:column;align-items:center}
+  .fm-step{background:#fff;border:1px solid var(--line);border-radius:10px;padding:9px 16px;text-align:center;width:100%;max-width:220px}
+  .fm-step.hi{border-color:var(--primary);background:var(--primary-soft)}
+  .fm-step.loop{border-style:dashed}
+  .fm-n{font-size:11px;font-weight:800;color:var(--primary);margin-bottom:2px}
+  .fm-t{font-size:13px;font-weight:700}
+  .fm-s{font-size:11.5px;color:var(--muted);margin-top:2px}
+  .fm-arrow{color:#b6c0d4;font-size:14px;line-height:1;padding:5px 0}
+  .fm-branch{display:grid;grid-template-columns:1fr 1fr;gap:14px;width:100%;margin-top:10px;padding-top:16px;position:relative}
+  .fm-branch::before{content:"";position:absolute;top:0;left:25%;right:25%;height:1px;background:var(--line)}
+  .fm-col{display:flex;flex-direction:column;align-items:center}
+  .fm-tag{font-size:11.5px;font-weight:700;padding:3px 12px;border-radius:20px}
+  .fm-tag.ok{background:var(--green-soft);color:var(--green)}
+  .fm-tag.warn{background:var(--orange-soft);color:var(--orange)}
+  /* 功能模块卡（可点击） */
+  .mod-card{cursor:pointer;transition:.15s;display:flex;flex-direction:column}
+  .mod-card:hover{border-color:var(--primary);box-shadow:0 4px 14px rgba(63,95,220,.14);transform:translateY(-2px)}
+  .mod-card .mh{display:flex;align-items:center;gap:9px;margin-bottom:7px}
+  .mod-card .mi{width:30px;height:30px;border-radius:8px;background:var(--primary-soft);display:flex;align-items:center;justify-content:center;font-size:15px;flex:none}
+  .mod-card .mt{font-size:14px;font-weight:700}
+  .mod-card .mt .tag{font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;vertical-align:1px}
+  .mod-card .md{font-size:12.5px;color:var(--muted);line-height:1.75}
+  .mod-card .go{font-size:12px;font-weight:600;color:var(--primary);margin-top:auto;padding-top:10px}
+  .g3 .span2{grid-column:span 2}
+  @media(max-width:900px){.g3 .span2{grid-column:span 1}}
+  /* 求职者背景输入 */
+  .drop{
+    border:1.5px dashed #c9d2e8;border-radius:12px;background:#fbfcff;padding:16px 14px;
+    text-align:center;cursor:pointer;transition:.15s;
+  }
+  .drop:hover,.drop.over{border-color:var(--primary);background:var(--primary-soft)}
+  .drop .di{font-size:22px;line-height:1}
+  .drop .dt{font-size:13px;font-weight:700;margin-top:5px}
+  .drop .ds{font-size:11.5px;color:var(--muted);margin-top:3px;line-height:1.6}
+  .file-chip{
+    display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;
+    background:var(--green-soft);color:var(--green);padding:4px 11px;border-radius:20px;max-width:100%;
+  }
+  .file-chip span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .pm-src{font-size:11.5px;color:var(--muted);margin-top:10px;padding-top:9px;border-top:1px dashed var(--line);line-height:1.7}
+  .pm-empty{text-align:center;padding:6px 0 2px;color:var(--muted);font-size:12.5px;line-height:1.8}
+  .divider-or{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:11.5px;margin:10px 0}
+  .divider-or::before,.divider-or::after{content:"";flex:1;height:1px;background:var(--line)}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <div class="brand">
+      <div class="logo">求职助<span>·</span>Coach</div>
+      <div class="sub">应届生求职教练工作台</div>
+    </div>
+    <nav class="nav" id="nav">
+      <a data-tab="overview" class="active"><span class="ic">🏠</span>总览</a>
+      <a data-tab="smart"><span class="ic">🧠</span>AI 智能评估</a>
+      <a data-tab="match"><span class="ic">📊</span>快速评估</a>
+      <a data-tab="resume"><span class="ic">📝</span>简历工作台</a>
+      <a data-tab="plan"><span class="ic">📚</span>提升规划</a>
+      <a data-tab="interview"><span class="ic">🎤</span>模拟面试</a>
+    </nav>
+    <div class="side-foot">
+      目标：网安弱技术岗 / 互联网产品·需求分析<br>
+      画像：无经验应届生 · 需定制简历
+    </div>
+  </aside>
+
+  <main class="main">
+    <!-- ============ 总览 ============ -->
+    <section class="page active" id="page-overview">
+      <div class="card mb16">
+        <div class="hero">
+          <div class="hero-left">
+            <span class="hero-eyebrow">应届生求职教练工作台</span>
+            <h1 class="hero-title">求职助</h1>
+            <p class="hero-sub">先设置「求职者背景」→ 粘贴 JD → AI 评估 → 简历定制 → 模拟面试，一条完整流程，全程本地运行，无需后端与 API Key。</p>
+            <div class="row mt16">
+              <button class="btn primary" onclick="switchTab('smart')">🚀 开始 AI 智能评估</button>
+              <button class="btn ghost" onclick="switchTab('match')">📊 快速评估（离线）</button>
+            </div>
+            <div class="hero-stats mt16">
+              <div><b>5</b><span>目标岗位画像</span></div>
+              <div><b>15</b><span>静态面试题库</span></div>
+              <div><b>8</b><span>AI 动态出题</span></div>
+              <div><b>100%</b><span>本地运行</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid g3 mb16">
+        <div class="card">
+          <h3>👤 求职者画像<span class="tag blue" id="pmBadge">待生成</span></h3>
+
+          <!-- 状态一：尚未提供背景 -->
+          <div id="pmSetup">
+            <div class="drop" id="pmDrop">
+              <div class="di">📄</div>
+              <div class="dt">上传简历 / 背景文件</div>
+              <div class="ds">支持 .docx / .txt / .md / .csv / .json，也可把文件拖到这里</div>
+            </div>
+            <input type="file" id="pmFile" accept=".docx,.txt,.md,.markdown,.csv,.json" hidden>
+            <div class="mt8" id="pmFileName"></div>
+            <div class="divider-or">或直接输入</div>
+            <textarea id="pmText" rows="6" placeholder="粘贴「求职者背景」：姓名、联系方式、教育背景、专业技能、项目经历、实习/实践经历、证书荣誉、目标岗位、自身短板…（内容越结构化，提取越准确）"></textarea>
+            <div class="row mt8">
+              <button class="btn primary" onclick="buildProfileFromInput()">🔍 提取并生成画像</button>
+              <button class="btn ghost" onclick="clearProfileInput()">清空</button>
+            </div>
+            <div class="pm-empty">未设置画像前，AI 智能评估与简历工作台将提示你先完成这一步。<br>所有内容仅在本机浏览器处理与保存。</div>
+          </div>
+
+          <!-- 状态二：已生成画像 -->
+          <div id="pmView" class="hidden">
+            <div class="pm-name" id="pmName">—</div>
+            <div class="pm-line" id="pmEdu"></div>
+            <div class="pm-line" id="pmTarget"></div>
+            <div class="pm-tags" id="pmTags"></div>
+            <div class="pm-src" id="pmSrc"></div>
+            <div class="row mt8">
+              <button class="btn ghost" onclick="editProfile()">✏️ 重新上传 / 编辑</button>
+              <button class="btn ghost" onclick="clearProfile()">🗑️ 清除画像</button>
+            </div>
+          </div>
+        </div>
+        <div class="card span2">
+          <h3>核心工作流程</h3>
+          <div class="fm">
+            <div class="fm-step"><div class="fm-n">①</div><div class="fm-t">输入目标岗位 JD</div></div>
+            <div class="fm-arrow">↓</div>
+            <div class="fm-step hi"><div class="fm-n">②</div><div class="fm-t">AI 智能评估</div><div class="fm-s">能力模型法：硬性门槛一票否决 + 软性增量</div></div>
+            <div class="fm-branch">
+              <div class="fm-col">
+                <div class="fm-tag ok">硬性门槛通过</div>
+                <div class="fm-arrow">↓</div>
+                <div class="fm-step"><div class="fm-n">③</div><div class="fm-t">简历定制</div><div class="fm-s">按岗位一键生成 · 实时预览</div></div>
+                <div class="fm-arrow">↓</div>
+                <div class="fm-step"><div class="fm-n">⑤</div><div class="fm-t">模拟面试</div><div class="fm-s">AI 动态出题 + 自评复盘</div></div>
+              </div>
+              <div class="fm-col">
+                <div class="fm-tag warn">存在硬性缺口</div>
+                <div class="fm-arrow">↓</div>
+                <div class="fm-step"><div class="fm-n">④</div><div class="fm-t">提升规划</div><div class="fm-s">缺口清单 + 分阶段学习路径</div></div>
+                <div class="fm-arrow">↓</div>
+                <div class="fm-step loop"><div class="fm-n">↺</div><div class="fm-t">补齐后回到 ②</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid g3">
+        <div class="card mod-card span2" onclick="switchTab('smart')">
+          <div class="mh"><div class="mi">🧠</div><div class="mt">AI 智能评估<span class="tag blue">推荐首选</span></div></div>
+          <div class="md">输入岗位与 JD，一键自动从 JD 语义拆解能力要求，判定硬性门槛与软性增量，输出匹配度、亮点风险与面试重点。</div>
+          <div class="go">开始评估 →</div>
+        </div>
+        <div class="card mod-card" onclick="switchTab('match')">
+          <div class="mh"><div class="mi">📊</div><div class="mt">快速评估</div></div>
+          <div class="md">本地关键词比对 + 六维雷达图，秒出结果，适合投递前快速初筛。</div>
+          <div class="go">快速初筛 →</div>
+        </div>
+        <div class="card mod-card" onclick="switchTab('resume')">
+          <div class="mh"><div class="mi">📝</div><div class="mt">简历工作台</div></div>
+          <div class="md">按 5 类目标岗位一键定制，实时预览，支持导出 Markdown / 打印 PDF。</div>
+          <div class="go">定制简历 →</div>
+        </div>
+        <div class="card mod-card" onclick="switchTab('plan')">
+          <div class="mh"><div class="mi">📚</div><div class="mt">提升规划</div></div>
+          <div class="md">基于评估缺口自动生成分阶段学习计划，含免费学习资源与预计耗时。</div>
+          <div class="go">生成规划 →</div>
+        </div>
+        <div class="card mod-card" onclick="switchTab('interview')">
+          <div class="mh"><div class="mi">🎤</div><div class="mt">模拟面试</div></div>
+          <div class="md">AI 结合岗位与你的真实经历、短板动态出题，配套静态题库与自评复盘。</div>
+          <div class="go">开始练习 →</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ AI 智能评估 ============ -->
+    <section class="page" id="page-smart">
+      <h1 class="title">AI 智能评估</h1>
+      <p class="desc">输入目标岗位与 JD，AI 自动从 JD 语义中拆解能力要求、判定硬性门槛与软性增量，输出人岗匹配报告与面试重点，全程一键完成。</p>
+
+      <div class="card mb16">
+        <div class="grid g2">
+          <div>
+            <label class="f">目标岗位</label>
+            <select id="smartJob" onchange="onSmartJobChange()">
+              <option value="安全售前工程师">安全售前工程师</option>
+              <option value="安全产品经理">安全产品经理</option>
+              <option value="需求分析师">需求分析师</option>
+              <option value="互联网产品经理">互联网产品经理</option>
+              <option value="AI应用管培生">AI 应用管培生</option>
+              <option value="__custom">自定义岗位…</option>
+            </select>
+            <input type="text" id="smartJobCustom" class="mt8" placeholder="输入自定义岗位名" style="display:none">
+            <div class="small muted mt8">提示：可先在「匹配度评估」页看到同一 JD 的雷达图初筛，再回到本页做深度评估。</div>
+          </div>
+          <div>
+            <label class="f">求职者背景</label>
+            <div class="notice" style="margin:0" id="smartProfileBox">
+              <div id="smartProfileState">尚未设置求职者背景</div>
+              <div class="small mt8" id="smartProfileBrief" style="color:#3b4a6b;line-height:1.8"></div>
+              <div class="row mt8" id="smartProfileGo">
+                <button class="btn ghost" onclick="switchTab('overview')">前往「总览」设置 →</button>
+              </div>
+            </div>
+            <div class="small muted mt8">背景取自「总览 · 求职者画像」，本页无需重复输入。</div>
+          </div>
+        </div>
+        <div class="mt8">
+          <label class="f">岗位 JD</label>
+          <textarea id="smartJd" rows="7" placeholder="粘贴目标岗位的完整 JD（岗位职责 + 任职要求）…"></textarea>
+        </div>
+        <div class="row mt16">
+          <button class="btn primary" onclick="startSmartEval()">🚀 开始 AI 智能评估</button>
+          <button class="btn ghost" onclick="smartLoadSample()">填入示例 JD</button>
+        </div>
+      </div>
+
+      <div id="smartLoading" class="card mb16 hidden">
+        <div class="row" style="align-items:center;gap:12px">
+          <div class="spinner"></div>
+          <div>
+            <b>AI 正在分析…</b>
+            <div id="smartLoadingMsg" class="small muted">解析 JD 能力要求…</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="smartResult" class="hidden mt16">
+        <div id="smartEvalNotice" class="notice hidden"></div>
+        <div class="grid g2">
+          <div class="card">
+            <h3>能力模型 · 判定结果</h3>
+            <div id="smartVerdict"></div>
+          </div>
+          <div class="card">
+            <h3>能力匹配评估（能力模型法）</h3>
+            <div id="smartFit"></div>
+          </div>
+        </div>
+        <div class="grid g2 mt16">
+          <div class="card" id="smartGateCard"><h3>硬性门槛判定（一票否决）</h3><div id="smartGate"></div></div>
+          <div class="card"><h3>软性增量评估</h3><div id="smartSoft"></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 匹配度评估 ============ -->
+    <section class="page" id="page-match">
+      <h1 class="title">匹配度评估</h1>
+      <p class="desc">Step 1：粘贴岗位 JD，选择岗位类型，自动解析关键词并与求职者背景比对，生成可视化匹配度报告。</p>
+
+      <div class="card mb16">
+        <div class="grid g2">
+          <div>
+            <label class="f">目标岗位类型</label>
+            <select id="jobType">
+              <option value="安全售前工程师">安全售前工程师</option>
+              <option value="安全产品经理">安全产品经理</option>
+              <option value="需求分析师">需求分析师</option>
+              <option value="互联网产品经理">互联网产品经理</option>
+              <option value="AI应用管培生">AI 应用管培生</option>
+            </select>
+          </div>
+          <div>
+            <label class="f">岗位名称（可选，用于报告标题）</label>
+            <input type="text" id="jobName" placeholder="例：售前工程师 @ 某安全厂商">
+          </div>
+        </div>
+        <div class="mt16">
+          <label class="f">粘贴 JD 正文</label>
+          <textarea id="jdText" rows="7" placeholder="把招聘 JD 的要求/职责/加分项整段粘贴到这里…"></textarea>
+        </div>
+        <div class="row mt16">
+          <button class="btn primary" onclick="runMatch()">🔍 开始评估</button>
+          <button class="btn ghost" onclick="loadSampleJD()">填入示例 JD</button>
+          <button class="btn ghost" onclick="clearJD()">清空</button>
+        </div>
+      </div>
+
+      <div id="matchResult" class="hidden">
+        <div class="grid g2">
+          <div class="card">
+            <h3>雷达图 · 六维能力</h3>
+            <div id="radar" style="width:100%;max-width:360px;margin:0 auto"></div>
+          </div>
+          <div class="card">
+            <h3>综合得分</h3>
+            <div class="score-wrap">
+              <div class="big-score" id="totalScore" style="color:var(--primary)">--</div>
+              <div style="flex:1">
+                <div class="bar"><i id="totalBar" style="width:0%"></i></div>
+                <div class="small muted mt8" id="totalJudge"></div>
+              </div>
+            </div>
+            <div class="notice mt16" id="branchNotice"></div>
+            <div class="small muted">说明：本地启发式评分，基于「JD 关键词 × 求职者已有能力」比对，用于快速初筛；最终结论由 AI 精调。</div>
+          </div>
+        </div>
+
+        <div class="card mt16">
+          <h3>各维度得分明细</h3>
+          <div style="overflow-x:auto">
+            <table class="dim-table">
+              <thead><tr><th>维度</th><th>权重</th><th>得分</th><th>匹配状态</th><th>JD 命中关键词（绿=已具备 / 红=缺失）</th></tr></thead>
+              <tbody id="dimTable"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card mt16" id="gapCard">
+          <h3 id="gapTitle">下一步建议</h3>
+          <div id="gapBody"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 简历工作台 ============ -->
+    <section class="page" id="page-resume">
+      <h1 class="title">简历工作台</h1>
+      <p class="desc">Step 2A：按目标岗位定制简历。左侧编辑，右侧实时预览，可导出 Markdown 或打印为 PDF。</p>
+
+      <div class="toolbar">
+        <label class="f" style="margin:0;align-self:center">定制岗位：</label>
+        <select id="resumeJob" onchange="applyJobFocus()" style="width:200px">
+          <option value="AI应用管培生">AI 应用管培生</option>
+          <option value="安全售前工程师">安全售前工程师</option>
+          <option value="安全产品经理">安全产品经理</option>
+          <option value="需求分析师">需求分析师</option>
+          <option value="互联网产品经理">互联网产品经理</option>
+        </select>
+        <button class="btn soft" onclick="exportMarkdown()">📋 复制 Markdown</button>
+        <button class="btn primary" onclick="window.print()">🖨️ 打印 / 导出 PDF</button>
+      </div>
+
+      <div class="card mb16" id="resumeNotice">
+        <div class="notice warn" style="margin:0" id="resumeNoticeBody"></div>
+      </div>
+
+      <div class="grid" style="grid-template-columns:420px 1fr;align-items:start">
+        <div class="card" style="max-height:80vh;overflow:auto">
+          <h3>编辑区 <span class="small muted" id="fillTip" style="font-weight:500"></span></h3>
+          <label class="f">求职意向</label>
+          <input type="text" id="f-job" class="mb16" placeholder="例：安全售前工程师">
+          <label class="f">姓名</label><input type="text" id="f-name" class="mb16" placeholder="从画像自动提取">
+          <div class="grid g2">
+            <div><label class="f">电话</label><input type="text" id="f-phone" placeholder="从画像自动提取"></div>
+            <div><label class="f">邮箱</label><input type="text" id="f-email" placeholder="从画像自动提取"></div>
+          </div>
+          <div class="grid g2 mt8">
+            <div><label class="f">现住址</label><input type="text" id="f-city" placeholder="从画像自动提取"></div>
+            <div><label class="f">到岗时间</label><input type="text" id="f-arrive" placeholder="如：随时"></div>
+          </div>
+          <label class="f mt8">教育背景（学校 · 专业 · 学历 · 时间）</label>
+          <input type="text" id="f-edu" class="mb16" placeholder="从画像自动提取">
+          <label class="f">专业技能（每行一条）</label>
+          <textarea id="f-skill" rows="6" class="mb16" placeholder="从画像自动提取"></textarea>
+          <label class="f">项目经历（每段以空行分隔，每段内首行为标题，其余为要点）</label>
+          <textarea id="f-project" rows="12" class="mb16" placeholder="从画像自动提取"></textarea>
+          <label class="f">实习/实践经历（同上格式）</label>
+          <textarea id="f-exp" rows="6" class="mb16" placeholder="从画像自动提取"></textarea>
+          <label class="f">自我评价</label>
+          <textarea id="f-eval" rows="5" class="mb16" placeholder="需自行撰写，系统不会代填"></textarea>
+          <div class="row">
+            <button class="btn soft" onclick="refillResume(true)">↻ 从画像重新预填</button>
+          </div>
+          <div class="small muted mt8">编辑后预览即时更新，内容已自动保存到本地浏览器。</div>
+        </div>
+
+        <div>
+          <div class="toolbar">
+            <button class="btn ghost" onclick="clearResumeFields()">清空表单</button>
+          </div>
+          <div class="resume-preview" id="resumePreview"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 提升规划 ============ -->
+    <section class="page" id="page-plan">
+      <h1 class="title">能力提升规划</h1>
+      <p class="desc">Step 2B：当匹配度 ＜80% 时，按能力缺口生成分阶段学习计划。先在「匹配度评估」跑一次评估，缺口会自动带到这里。</p>
+
+      <div class="card mb16">
+        <div class="row">
+          <div class="grow"><label class="f">目标岗位</label><select id="planJob"><option>安全售前工程师</option><option>安全产品经理</option><option>需求分析师</option><option>互联网产品经理</option><option>AI应用管培生</option></select></div>
+          <div><button class="btn primary" onclick="genPlan()">📚 生成提升规划</button></div>
+        </div>
+      </div>
+
+      <div id="planResult"></div>
+    </section>
+
+    <!-- ============ 模拟面试 ============ -->
+    <section class="page" id="page-interview">
+      <h1 class="title">模拟面试</h1>
+      <p class="desc">Step 4：按岗位分类的题库 + 答题框架参考。可模拟面试官提问，先自答再看参考要点，逐题自评复盘。</p>
+
+      <div class="card mb16">
+        <h3>🧠 AI 动态出题（推荐）</h3>
+        <div class="notice">一键针对<b>该岗位 + 你的真实经历与短板</b>即时生成 8 道针对性题目，告别通用题库。若先跑过「AI 智能评估」，出题会进一步贴合该 JD 的能力缺口。</div>
+        <div class="grid g2">
+          <div>
+            <label class="f">目标岗位</label>
+            <select id="ivGenJob">
+              <option>AI应用管培生</option>
+              <option>安全售前工程师</option>
+              <option>安全产品经理</option>
+              <option>需求分析师</option>
+              <option>互联网产品经理</option>
+            </select>
+          </div>
+          <div>
+            <label class="f">出题侧重（可选）</label>
+            <input type="text" id="ivExtraReq" placeholder="如：重点考沟通短板 / 深挖同态加密项目…">
+          </div>
+        </div>
+        <div class="row mt16">
+          <button class="btn primary" onclick="genAiInterview()">🚀 开始 AI 智能出题</button>
+        </div>
+      </div>
+
+      <div class="card mb16">
+        <h3>面试模拟器</h3>
+        <div class="row">
+          <div class="grow"><label class="f">当前模拟岗位</label><select id="ivJob"><option>AI应用管培生</option><option>安全售前工程师</option><option>安全产品经理</option><option>需求分析师</option><option>互联网产品经理</option></select></div>
+          <div><button class="btn primary" onclick="drawQuestion()">🎲 抽一道题</button></div>
+        </div>
+        <div id="ivStage" class="hidden mt16">
+          <div class="q-item">
+            <div class="q" id="ivQ"></div>
+            <div class="meta"><span id="ivCat"></span><span id="ivFocus"></span></div>
+            <label class="f mt8">我的回答（可先口述练习，或在此打草稿）</label>
+            <textarea id="ivAns" rows="4" placeholder="先自己组织答案，再点「看参考要点」对比…"></textarea>
+            <div class="row mt8">
+              <button class="btn soft" onclick="toggleHint()">💡 看参考要点</button>
+              <div class="grow"></div>
+              <span class="small muted">自评：</span>
+              <select id="ivRate" style="width:110px"><option value="0">— 打分 —</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option></select>
+              <button class="btn ghost" onclick="saveRating()">记录</button>
+            </div>
+          </div>
+          <div class="ans" id="ivHint"></div>
+          <div class="mt16" id="ivLog"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>题库浏览</h3>
+        <div class="chips" id="ivChips"></div>
+        <div id="ivList"></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+/* ================= 数据 ================= */
+const DIM_LABELS = ["学历专业","技术基础","业务知识","软技能","工具能力","加分项"];
+
+const JOB_TYPES = {
+  "安全售前工程师": { weights:{学历专业:15,技术基础:20,业务知识:20,软技能:25,工具能力:15,加分项:5},
+    focus:"售前技术交流、方案与标书、客户对接、安全产品知识" },
+  "安全产品经理": { weights:{学历专业:15,技术基础:20,业务知识:25,软技能:20,工具能力:15,加分项:5},
+    focus:"安全产品规划、竞品分析、需求梳理、原型与文档" },
+  "需求分析师": { weights:{学历专业:15,技术基础:20,业务知识:25,软技能:20,工具能力:15,加分项:5},
+    focus:"需求调研与拆解、业务流程建模、需求规格说明" },
+  "互联网产品经理": { weights:{学历专业:15,技术基础:15,业务知识:25,软技能:25,工具能力:15,加分项:5},
+    focus:"用户研究、产品设计、数据驱动、跨团队协作" },
+  "AI应用管培生": { weights:{学历专业:15,技术基础:20,业务知识:25,软技能:25,工具能力:15,加分项:5},
+    focus:"AI 工具链、提示词与 Agent 工作流、业务场景落地" },
+};
+
+/* 关键词库：word=关键词, dim=维度, user=求职者是否已具备, tags=相关岗位(空=通用) */
+const KEYWORDS = [
+  // 技术基础
+  {word:"网络安全",dim:"技术基础",user:true},
+  {word:"网络攻防",dim:"技术基础",user:true},
+  {word:"渗透测试",dim:"技术基础",user:false},
+  {word:"同态加密",dim:"技术基础",user:true},
+  {word:"密码学",dim:"技术基础",user:true},
+  {word:"隐私保护",dim:"技术基础",user:true},
+  {word:"机器学习",dim:"技术基础",user:true},
+  {word:"Python",dim:"技术基础",user:true},
+  {word:"Java",dim:"技术基础",user:true},
+  {word:"C++",dim:"技术基础",user:true},
+  {word:"HTTP",dim:"技术基础",user:true},
+  {word:"Socket",dim:"技术基础",user:true},
+  {word:"FastAPI",dim:"技术基础",user:true},
+  {word:"Gradio",dim:"技术基础",user:true},
+  {word:"TenSEAL",dim:"技术基础",user:true},
+  {word:"等级保护",dim:"技术基础",user:false},
+  {word:"防火墙",dim:"技术基础",user:false},
+  {word:"WAF",dim:"技术基础",user:false},
+  {word:"漏洞",dim:"技术基础",user:false},
+  {word:"云安全",dim:"技术基础",user:false},
+  {word:"数据安全",dim:"技术基础",user:false},
+  {word:"安全设备",dim:"技术基础",user:false},
+  {word:"渗透",dim:"技术基础",user:false},
+  {word:"攻防",dim:"技术基础",user:true},
+  // 业务知识
+  {word:"需求分析",dim:"业务知识",user:true},
+  {word:"需求拆解",dim:"业务知识",user:true},
+  {word:"产品策划",dim:"业务知识",user:true},
+  {word:"产品设计",dim:"业务知识",user:false},
+  {word:"产品规划",dim:"业务知识",user:false},
+  {word:"用户研究",dim:"业务知识",user:false},
+  {word:"竞品分析",dim:"业务知识",user:false},
+  {word:"原型设计",dim:"业务知识",user:false},
+  {word:"售前",dim:"业务知识",user:false},
+  {word:"招投标",dim:"业务知识",user:false},
+  {word:"标书",dim:"业务知识",user:false},
+  {word:"方案设计",dim:"业务知识",user:true},
+  {word:"客户需求",dim:"业务知识",user:false},
+  {word:"解决方案",dim:"业务知识",user:false},
+  {word:"活动策划",dim:"业务知识",user:true},
+  {word:"内容运营",dim:"业务知识",user:true},
+  {word:"用户运营",dim:"业务知识",user:true},
+  {word:"客服",dim:"业务知识",user:true},
+  {word:"AI",dim:"业务知识",user:true},
+  {word:"大模型",dim:"业务知识",user:true},
+  {word:"Agent",dim:"业务知识",user:true},
+  // 软技能
+  {word:"沟通表达",dim:"软技能",user:false},
+  {word:"沟通",dim:"软技能",user:false},
+  {word:"团队协作",dim:"软技能",user:true},
+  {word:"文档撰写",dim:"软技能",user:true},
+  {word:"演讲",dim:"软技能",user:false},
+  {word:"汇报",dim:"软技能",user:false},
+  {word:"客户对接",dim:"软技能",user:false},
+  {word:"商务谈判",dim:"软技能",user:false},
+  {word:"项目管理",dim:"软技能",user:true},
+  {word:"需求沟通",dim:"软技能",user:true},
+  {word:"跨部门",dim:"软技能",user:false},
+  {word:"方案讲解",dim:"软技能",user:false},
+  {word:"表达",dim:"软技能",user:false},
+  // 工具能力
+  {word:"Office",dim:"工具能力",user:true},
+  {word:"PPT",dim:"工具能力",user:true},
+  {word:"Word",dim:"工具能力",user:true},
+  {word:"Excel",dim:"工具能力",user:true},
+  {word:"WPS",dim:"工具能力",user:true},
+  {word:"Axure",dim:"工具能力",user:false},
+  {word:"墨刀",dim:"工具能力",user:false},
+  {word:"Figma",dim:"工具能力",user:false},
+  {word:"Visio",dim:"工具能力",user:false},
+  {word:"Xmind",dim:"工具能力",user:false},
+  {word:"剪映",dim:"工具能力",user:true},
+  {word:"PS",dim:"工具能力",user:true},
+  {word:"秀米",dim:"工具能力",user:true},
+  {word:"原型",dim:"工具能力",user:false},
+  {word:"Unity",dim:"工具能力",user:true},
+  // 加分项
+  {word:"证书",dim:"加分项",user:true},
+  {word:"CET",dim:"加分项",user:true},
+  {word:"CISP",dim:"加分项",user:false},
+  {word:"NISP",dim:"加分项",user:true},
+  {word:"竞赛",dim:"加分项",user:true},
+  {word:"实习",dim:"加分项",user:true},
+  {word:"开源",dim:"加分项",user:true},
+  {word:"博客",dim:"加分项",user:true},
+  {word:"提示词",dim:"加分项",user:true},
+  {word:"大模型",dim:"加分项",user:true},
+  {word:"双一流",dim:"加分项",user:true},
+];
+
+const GAP_PLANS = {
+  "渗透测试": {need:"渗透测试基础与工具（Kali、Nmap、Burp Suite、SQL 注入等）",res:"B站「渗透测试入门」/ TryHackMe / 官方文档",dur:"2-3 周"},
+  "等级保护": {need:"等保 2.0 测评流程、定级备案、整改要求",res:"《网络安全等级保护基本要求》GB/T 22239 + 培训视频",dur:"1-2 周"},
+  "防火墙": {need:"常见安全设备原理（防火墙/WAF/IDS/IPS）",res:"厂商官网文档 + 免费云安全课程",dur:"1 周"},
+  "WAF": {need:"Web 应用防火墙原理与部署",res:"厂商产品白皮书 + 实验环境",dur:"1 周"},
+  "云安全": {need:"云安全基础（租户安全、容器/K8s 安全）",res:"阿里云/腾讯云安全认证公开课",dur:"2 周"},
+  "漏洞": {need:"常见 Web 漏洞原理与修复（OWASP Top 10）",res:"OWASP 官方文档 + PortSwigger Web Security Academy",dur:"2 周"},
+  "产品设计": {need:"产品设计方法论、PRD 撰写、产品生命周期",res:"《人人都是产品经理》/ 三节课产品入门",dur:"2-3 周"},
+  "用户研究": {need:"用户访谈、问卷设计、用户画像",res:"《用户体验要素》+ 免费用户研究方法课",dur:"1-2 周"},
+  "竞品分析": {need:"竞品分析方法与报告输出",res:"竞品分析模板 + 案例分析",dur:"1 周"},
+  "原型设计": {need:"原型工具与低保真/高保真原型",res:"Axure/Figma 官方教程",dur:"2 周"},
+  "售前": {need:"售前岗位职责、技术交流与方案呈现流程",res:"售前工程师岗位课 + 观摩真实投标案例",dur:"2 周"},
+  "招投标": {need:"招投标流程、标书结构与撰写",res:"招投标法规 + 标书模板",dur:"1-2 周"},
+  "标书": {need:"标书撰写与应标流程",res:"标书模板 + 案例拆解",dur:"1-2 周"},
+  "沟通表达": {need:"结构化表达（STAR/金字塔原理）与临场表达",res:"《金字塔原理》+ 每日 1 分钟口述练习",dur:"持续练习"},
+  "演讲": {need:"公开表达与方案汇报",res:"Toastmasters / 课堂模拟汇报",dur:"持续练习"},
+  "客户对接": {need:"客户需求访谈与沟通技巧",res:"售前沟通案例 + 角色扮演",dur:"2 周"},
+  "商务谈判": {need:"基础商务沟通与谈判",res:"谈判技巧书籍/课程",dur:"2 周"},
+  "Axure": {need:"Axure 原型绘制",res:"Axure 官方教程 + 实战小项目",dur:"1-2 周"},
+  "Figma": {need:"Figma 界面设计与协作",res:"Figma 官方 + B站教程",dur:"1 周"},
+  "CISP": {need:"安全专业认证（工作后可考）",res:"CISP 官方教材",dur:"入职后"},
+};
+
+/* ================= 求职者背景：上传 / 输入 → 结构化画像 ================= */
+/* 全部信息来自用户本人提供的内容，代码中不含任何预设个人数据。
+   数据仅保存在本机浏览器（localStorage），不上传任何服务器。 */
+const PROFILE_KEY = 'jobProfile.v1';
+let PROFILE = null;
+
+/* 形式二（整行即标题）匹配：要求关键词位于行首 */
+const SEC_PATTERNS = [
+  {key:'intent',  re:/求职意向|目标岗位|意向岗位|期望岗位|期望职位|求职方向/},
+  {key:'edu',     re:/教育背景|教育经历|学历情况|学历|教育/},
+  {key:'skill',   re:/专业技能|专业特长|技能特长|技能|技术栈|技术能力|专业能力/},
+  {key:'project', re:/项目经历|项目经验|科研项目|学科竞赛|毕业设计|项目/},
+  {key:'exp',     re:/实习经历|实践经验|实习|实践经历|工作经历|工作经验|校园经历|学生工作|社会活动|活动经历|实践/},
+  {key:'cert',    re:/证书荣誉|荣誉奖项|获奖情况|证书|荣誉|获奖|奖项|资质/},
+  {key:'weak',    re:/自身短板|个人短板|短板|不足之处|缺点|待提升|改进方向/},
+  {key:'eval',    re:/自我评价|自我描述|个人评价|个人总结|评价/},
+  {key:'basic',   re:/基本信息|个人资料|个人信息|联系方式|基本情况/},
+];
+/* 形式一（关键词 + 冒号 + 行内内容）匹配：可含更宽松的口语化标签 */
+const INLINE_LABELS = [
+  {key:'intent',  re:/求职意向|目标岗位|意向岗位|期望岗位|期望职位|求职方向|意向/},
+  {key:'edu',     re:/教育背景|教育经历|学历|毕业院校|学校|教育/},
+  {key:'skill',   re:/专业技能|技能特长|技能|技术栈|技术能力|专业能力|能力/},
+  {key:'project', re:/项目经历|项目经验|毕业设计|科研|项目/},
+  {key:'exp',     re:/实习经历|实践经历|工作经历|校园经历|实习|实践|经历/},
+  {key:'cert',    re:/证书荣誉|荣誉奖项|获奖情况|证书|荣誉|获奖/},
+  {key:'weak',    re:/自身短板|个人短板|短板|不足之处|缺点|待提升|改进方向|不足/},
+  {key:'eval',    re:/自我评价|自我描述|个人评价|个人总结|评价/},
+  {key:'basic',   re:/基本信息|个人资料|个人信息|联系方式|基本情况/},
+];
+
+/* 识别分节标题。形式一：标签 + 冒号 + 内容（不限行长）；形式二：整行就是标题（行首匹配，后缀极短） */
+function matchHeading(line){
+  const clean = String(line||'').replace(/^[\s#>*\-–—]+/,'').replace(/^\d+[.、)）]\s*/,'').replace(/[：:]\s*$/,'').trim();
+  if(!clean) return null;
+  for(const s of INLINE_LABELS){
+    const m = clean.match(new RegExp('^(?:' + s.re.source + ')\\s*[：:]\\s*(.+)$'));
+    if(m) return {key:s.key, content:m[1].trim()};
+  }
+  if(clean.length > 22) return null;
+  for(const s of SEC_PATTERNS){
+    const m = clean.match(new RegExp('^(?:' + s.re.source + ')\\s*(.*)$'));
+    if(m){
+      const rest = (m[1]||'').replace(/[\s：:、，,\-—*#>·/]/g,'');
+      if(rest.length <= 6) return {key:s.key, content:''};
+    }
+  }
+  return null;
+}
+
+const SKILL_DICT = [
+  "Python","Java","JavaScript","TypeScript","C++","C 语言","C语言","C#","Go","Rust","PHP","Swift","Kotlin",
+  "SQL","MySQL","PostgreSQL","MongoDB","Redis","Linux","Shell","Docker","Kubernetes","Git",
+  "HTML","CSS","Vue","React","Spring","Django","Flask","FastAPI","Gradio","PyTorch","TensorFlow","TenSEAL",
+  "HTTP","TCP/IP","Socket","网络协议","数据结构","算法","操作系统","计算机网络",
+  "Axure","墨刀","Figma","Visio","Xmind","Sketch","Office","PPT","Word","Excel","WPS","PS","Photoshop","剪映","秀米","Unity",
+  "Ollama","ChatGPT","DeepSeek","Qwen","GLM","Kimi","豆包","Trae","Coze","Marvis","Copilot",
+  "Agent","智能体","提示词","大模型","LLM","AI","人工智能","机器学习","深度学习","神经网络","数据挖掘","数据分析",
+  "同态加密","密码学","加密","网络安全","网络攻防","信息安全","渗透测试","等级保护","等保","防火墙","WAF","IDS","IPS",
+  "云安全","数据安全","安全运营","漏洞","风险评估","应急响应",
+  "需求分析","需求拆解","产品策划","产品设计","产品规划","用户研究","竞品分析","原型设计","PRD","需求文档",
+  "售前","招投标","标书","方案设计","解决方案","项目管理","团队协作","文档撰写","沟通表达","演讲","汇报","数据分析能力"
+];
+
+const MAJOR_DICT = ["网络空间安全","信息安全","网络安全","计算机科学与技术","计算机技术","软件工程","电子信息","电子信息工程",
+  "通信工程","自动化","人工智能","数据科学","大数据","物联网工程","数字媒体技术","数学","统计学","应用数学",
+  "电子商务","工商管理","市场营销","人力资源管理","金融学","会计学","法学","英语","新闻学","汉语言文学"];
+
+const CITY_DICT = ["成都","北京","上海","广州","深圳","杭州","南京","武汉","西安","重庆","天津","苏州","长沙","郑州",
+  "合肥","厦门","青岛","大连","沈阳","济南","福州","昆明","南昌","无锡","宁波","东莞","佛山","珠海","贵阳","南宁","哈尔滨","长春","石家庄","太原","兰州"];
+
+function escRe(s){ return String(s).replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); }
+
+function splitSections(raw){
+  const sec = {};
+  let cur = 'basic';
+  sec[cur] = [];
+  raw.split('\n').forEach(line=>{
+    const t = line.trim();
+    if(!t){ sec[cur].push(''); return; }
+    const h = matchHeading(t);
+    if(h){
+      cur = h.key; sec[cur] = sec[cur] || [];
+      if(h.content) sec[cur].push(h.content);
+      return;
+    }
+    sec[cur].push(t);
+  });
+  return sec;
+}
+
+function firstMatch(text, re){ const m = String(text||'').match(re); return m ? (m[1]||'').trim() : ''; }
+
+function toBlock(s){
+  s = String(s).replace(/^\s*[-*•·]\s*/,'').replace(/^\d+[.、)）]\s*/,'').trim();
+  if(!s || s.length < 3) return null;
+  const lines = s.split('\n').map(x=>x.replace(/^\s*[-*•·]\s*/,'').replace(/^\d+[.、)）]\s*/,'').trim()).filter(Boolean);
+  if(!lines.length) return null;
+  let head = lines[0], meta = '';
+  const bullets = [];
+  const barIdx = head.indexOf('｜');
+  if(barIdx > 0){ meta = head.slice(barIdx+1).trim(); head = head.slice(0,barIdx).trim(); }
+  else {
+    const pm = head.match(/[（(]([^）)]{2,60})[）)]/);
+    if(pm){
+      const segs = pm[1].split(/[，,；;]/).map(x=>x.trim()).filter(Boolean);
+      if(segs.length && segs[0].length <= 10){ meta = segs[0]; segs.slice(1).forEach(x=>bullets.push(x)); }
+      else segs.forEach(x=>bullets.push(x));
+      head = head.replace(pm[0],'').trim();
+    }
+  }
+  lines.slice(1).forEach(l=> l.split(/[；;]/).map(x=>x.trim()).filter(Boolean).forEach(x=>bullets.push(x)));
+  if(!head) return null;
+  head = head.replace(/[，,；;、]\s*$/,'').trim();
+  if(head.length > 40) head = head.slice(0,40);
+  if(!meta){
+    if(/毕设|毕业设计/.test(s)) meta = '毕业设计';
+    else if(/实习/.test(s)) meta = '实习';
+    else if(/竞赛|比赛|大赛/.test(s)) meta = '竞赛';
+    else if(/展|活动|志愿|社团|学生会/.test(s)) meta = '实践';
+    else meta = '个人项目';
+  }
+  return {title:head, meta:meta, bullets:bullets.filter(b=>b.length>1).slice(0,6)};
+}
+
+/* 编号枚举切分：仅识别「1) / 2）」这类，避免误切 2023.07 这类日期 */
+const ENUM_SPLIT = /(?:^|[；;])\s*\d{1,2}\s*[)）、]\s*/;
+
+function parseExpBlocks(text){
+  if(!text || !text.trim()) return [];
+  let chunks = text.split(/\n\s*\n/).map(s=>s.trim()).filter(Boolean);
+  // 合并「标题段 + 空行 + 详情段」：docx 等逐段导出常把标题与要点拆成两段
+  const merged = [];
+  chunks.forEach(ch=>{
+    const head = ch.split('\n')[0] || '';
+    const titleLike = /｜/.test(head) || /20\d{2}/.test(head) || /[（(]/.test(head);
+    if(merged.length && !titleLike){
+      const prevHead = merged[merged.length-1].split('\n')[0] || '';
+      if(/｜/.test(prevHead) || /20\d{2}/.test(prevHead)){
+        merged[merged.length-1] = merged[merged.length-1] + '\n' + ch;
+        return;
+      }
+    }
+    merged.push(ch);
+  });
+  chunks = merged;
+  const out = [];
+  chunks.forEach(ch=>{
+    const lines = ch.split('\n').map(s=>s.trim()).filter(Boolean);
+    const first = lines[0] || '';
+    const num = first.split(ENUM_SPLIT).map(s=>s.trim()).filter(Boolean);
+    if(num.length > 1){
+      // 编号枚举：前 n-1 项各自成块，后续行并入最后一项作为要点
+      num.forEach((p, i)=>{
+        let body = p;
+        if(i === num.length - 1 && lines.length > 1) body = p + '\n' + lines.slice(1).join('\n');
+        const b = toBlock(body); if(b) out.push(b);
+      });
+      return;
+    }
+    if(lines.length > 1){ const b = toBlock(lines.join('\n')); if(b) out.push(b); return; }
+    first.split(/\s*[；;]\s*/).map(s=>s.trim()).filter(Boolean).forEach(p=>{ const b = toBlock(p); if(b) out.push(b); });
+  });
+  return out;
+}
+
+function parseProfileText(raw, source){
+  raw = String(raw||'').replace(/\r\n?/g,'\n').trim();
+  const sec = splitSections(raw);
+  const T = k => (sec[k]||[]).join('\n').trim();
+  const all = raw;
+
+  // —— 基本信息 ——
+  let name = firstMatch(T('basic'), /姓\s*名\s*[：:]\s*([^\n，,；;]{1,12})/)
+          || firstMatch(all, /我叫\s*([\u4e00-\u9fa5]{2,4})/)
+          || firstMatch(all, /我是\s*([\u4e00-\u9fa5]{2,4})/);
+  if(!name){
+    const fl = (all.split('\n')[0]||'').split(/[，,；;]/)[0].trim().replace(/^[#\s>*\-]+/,'');
+    if(/^[\u4e00-\u9fa5]{2,4}$/.test(fl)) name = fl;
+  }
+  const headText = (T('basic') + '\n' + (all.split('\n')[0]||'')).slice(0,200);
+  const gender = firstMatch(headText, /(?:性别\s*[：:]?\s*)?([男女])(?=[，,、\s。]|$)/);
+  const age = firstMatch(all, /(\d{2})\s*岁/);
+  const phoneM = all.match(/(?:^|\D)(1[3-9]\d{9})(?:\D|$)/);
+  const emailM = all.match(/[\w.+-]+@[\w-]+\.[\w.]+/);
+  let city = firstMatch(all, /(?:现住址|现居|现居住|居住地|所在地|所在城市|城市|住址)\s*[：:]\s*([^\n，,；;]{2,12})/);
+  if(!city) city = CITY_DICT.find(c=>all.includes(c)) || '';
+
+  // —— 教育 ——
+  const eduText = T('edu') || (all.includes('大学') || all.includes('学院') ? all : '');
+  let school = firstMatch(eduText, /([\u4e00-\u9fa5A-Za-z]{2,15}(?:大学|学院|学校|理工学院|工业大学))/);
+  let degree = firstMatch(eduText, /(博士|硕士|研究生|本科|学士|大专|专科)/);
+  if(!degree) degree = firstMatch(all, /(博士|硕士|研究生|本科|学士|大专|专科)/);
+  let major = firstMatch(eduText, /专\s*业\s*[：:]\s*([\u4e00-\u9fa5A-Za-z+ ]{2,18})/);
+  if(!major) major = MAJOR_DICT.find(m=>all.includes(m)) || '';
+  const period = firstMatch(eduText, /(20\d{2}\s*[.\-/年]\s*\d{1,2}\s*[^\n，,；;]{0,14}?20\d{2}\s*[.\-/年]\s*\d{1,2}|20\d{2}\s*[.\-/年]\s*\d{1,2}\s*[-–~至]\s*(?:20\d{2}\s*[.\-/年]\s*\d{1,2}|今|至今|现在))/);
+  let eduLine = '';
+  const eduLines = (sec['edu']||[]).map(s=>s.replace(/^[-*•·]\s*/,'').trim()).filter(Boolean);
+  if(eduLines.length) eduLine = eduLines.join(' · ');
+  else if(school || major || degree){
+    eduLine = [period, school, degree, major].filter(Boolean).join(' · ');
+  }
+
+  // —— 证书 ——
+  const certs = [];
+  const addCert = s=>{ s = String(s||'').replace(/^[-*•·]\s*/,'').replace(/[。；;]$/,'').trim(); if(s && s.length <= 30 && !certs.includes(s)) certs.push(s); };
+  const certRe = /(CET-?[46]\s*[（(]\s*\d{0,3}\s*[）)]?|NISP(?:\s*[一二三四]级)?|CISP(?:\s*[一二三四]级)?|计算机\s*[一二三四]级|雅思\s*\d{0,3}\.?\d?|托福\s*\d{0,3})/g;
+  let cm; const certScan = T('cert') + '\n' + all;
+  while((cm = certRe.exec(certScan)) !== null) addCert(cm[1]);
+  (sec['cert']||[]).forEach(line=> line.split(/[、,，;；]/).forEach(addCert));
+
+  // —— 目标岗位 ——
+  let targets = [];
+  const intentText = T('intent');
+  if(intentText){
+    targets = intentText.split(/[、,，\/;；]|\s{2,}/).map(s=>s.replace(/^[-*•·]?\s*/,'').trim()).filter(s=>s.length>1 && s.length<24);
+  }
+
+  // —— 技能 ——
+  const skillLines = (sec['skill']||[])
+    .map(s=>s.replace(/^[-*•·]\s*/,'').replace(/^\d+[.、)）]\s*/,'').trim())
+    .filter(Boolean);
+  const skillTags = [];
+  SKILL_DICT.forEach(k=>{ if(all.toLowerCase().includes(k.toLowerCase()) && !skillTags.includes(k)) skillTags.push(k); });
+
+  // —— 项目 / 经历 ——
+  const hasProjSec = !!(sec['project'] && sec['project'].join('').trim());
+  let projects = parseExpBlocks(T('project'));
+  let exps = parseExpBlocks(T('exp'));
+  if(!hasProjSec && exps.length){
+    // 没有独立的「项目」分节时（如自由文本「经历：1)…；2)…」），按语义分流
+    const r = routeBlocks(exps);
+    projects = projects.concat(r.p); exps = r.e;
+  }
+  if(!projects.length && !exps.length){
+    // 完全无分节时：逐行拆分（支持「1) …；2) …」）并按关键词归类
+    const items = [];
+    raw.split('\n').forEach(line=>{
+      const t = line.trim(); if(!t) return;
+      const h = matchHeading(t);
+      if(h && ['skill','weak','cert','intent','edu','eval'].includes(h.key)) return;  // 这些分节已单独提取
+      const body = h ? (h.content || '') : t;
+      if(!body) return;
+      let parts = body.split(ENUM_SPLIT).map(s=>s.trim()).filter(Boolean);
+      if(parts.length <= 1) parts = body.split(/\s*[；;]\s*/).map(s=>s.trim()).filter(Boolean);
+      parts.forEach(pc=>{
+        if(/\d{2}\s*岁/.test(pc)) return;                 // 排除个人信息行
+        const b = toBlock(pc); if(b) items.push(b);
+      });
+    });
+    const r = routeBlocks(items);
+    projects = r.p; exps = r.e;
+  }
+
+  // —— 短板 ——
+  const weakRaw = T('weak');
+  let weaknesses = weakRaw.split(/[、,，;；\n]/).map(s=>s.replace(/^[-*•·]?\s*/,'').trim()).filter(s=>s.length>1 && s.length<40);
+  if(!weaknesses.length){
+    const negSent = all.split(/[。\n]/).filter(s=>/不擅长|不自信|较慢|偏弱|缺乏|不足|需要提升|有待/.test(s));
+    weaknesses = negSent.map(s=>s.trim().slice(0,30)).filter(Boolean);
+  }
+
+  // 能力判定语料：正面 = 技能/项目/经历/证书；负面 = 短板
+  const posParts = [].concat(skillLines, (sec['project']||[]), (sec['exp']||[]), (sec['cert']||[]), (sec['edu']||[]));
+  let posText = posParts.join('\n').trim();
+  if(posText.length < 40) posText = raw;
+  const negText = [weakRaw, weaknesses.join('；')].filter(Boolean).join('\n');
+
+  return {
+    raw, source: source || '手动输入', updatedAt: Date.now(),
+    name, gender, age, phone: phoneM ? phoneM[1] : '', email: emailM ? emailM[0] : '', city,
+    school, degree: degree || '', major, period, eduLine,
+    certs: certs.slice(0,8), targets: targets.slice(0,6),
+    skillLines: skillLines.slice(0,12), skillTags: skillTags.slice(0,20),
+    projects: projects.slice(0,6), exps: exps.slice(0,6),
+    weaknesses: weaknesses.slice(0,5),
+    posText, negText
+  };
+}
+
+/* 把混合的经历条目分流为「项目」与「实习/实践」 */
+function routeBlocks(items){
+  const p = [], e = [];
+  (items||[]).forEach(b=>{
+    const s = b.title + ' ' + (b.meta||'') + ' ' + (b.bullets||[]).join(' ');
+    const expMark  = /实习|兼职|助理|学生会|社团|志愿|活动|展会|运营|客服|工作|实践/.test(s);
+    const projMark = /项目|系统|平台|毕设|毕业设计|开发|设计|研究|实验|模型|算法|竞赛|比赛/.test(s);
+    if(expMark && !projMark) e.push(b); else p.push(b);
+  });
+  return {p, e};
+}
+
+/* 判断画像是否具备某项能力 */
+function profileHas(P, kws){
+  if(!P || !P.posText) return false;
+  const pos = P.posText.toLowerCase();
+  const neg = P.negText || '';
+  const NEG_A = '(?:不会|不熟|不熟悉|缺乏|缺少|未掌握|短板|不足|待提升|不擅长|偏弱|较弱)';
+  const NEG_B = '(?:不足|不熟|不会|缺乏|缺少|偏弱|较弱|待提升|不擅长|不自信)';
+  for(const k of kws){
+    if(pos.indexOf(k.toLowerCase()) < 0) continue;
+    // 该能力出现在「短板」语境中（关键词在前或在后）时，视为尚未具备
+    if(neg && new RegExp(NEG_A + '[^。；;\\n]{0,14}' + escRe(k) + '|' + escRe(k) + '[^。；;\\n]{0,14}' + NEG_B).test(neg)) continue;
+    return true;
+  }
+  return false;
+}
+
+/* —— 画像渲染 —— */
+function renderProfileCard(){
+  const setup = document.getElementById('pmSetup');
+  const view  = document.getElementById('pmView');
+  const badge = document.getElementById('pmBadge');
+  if(!PROFILE){
+    setup.classList.remove('hidden'); view.classList.add('hidden');
+    badge.textContent = '待生成'; badge.className = 'tag orange';
+    renderSmartProfileState(); renderResumeNotice(); return;
+  }
+  const P = PROFILE;
+  setup.classList.add('hidden'); view.classList.remove('hidden');
+  badge.textContent = '已生成'; badge.className = 'tag green';
+
+  const bits = [P.age ? P.age + ' 岁' : '', P.gender || '', /应届|毕业|在读/.test(P.raw) ? '应届' : ''].filter(Boolean);
+  document.getElementById('pmName').innerHTML = esc(P.name || '未识别到姓名') +
+    (bits.length ? `<span>${esc(bits.join(' · '))}</span>` : '');
+  document.getElementById('pmEdu').textContent = P.eduLine || '未识别到教育背景（建议补充：学校 · 学历 · 专业 · 时间）';
+  document.getElementById('pmTarget').textContent = P.targets.length ? '目标：' + P.targets.join(' / ')
+    : (document.getElementById('resumeJob') && document.getElementById('resumeJob').value ? '目标：' + document.getElementById('resumeJob').value : '未填写目标岗位');
+
+  const tags = [];
+  (P.skillTags.length ? P.skillTags : []).slice(0,6).forEach(s=> tags.push(`<span class="pill ok">${esc(s)}</span>`));
+  P.weaknesses.slice(0,2).forEach(w=> tags.push(`<span class="pill mid">待提升：${esc(w.length>12?w.slice(0,12)+'…':w)}</span>`));
+  document.getElementById('pmTags').innerHTML = tags.length ? tags.join('') : '<span class="small muted">未提取到技能关键词</span>';
+
+  const when = new Date(P.updatedAt || Date.now());
+  const ts = `${when.getFullYear()}-${String(when.getMonth()+1).padStart(2,'0')}-${String(when.getDate()).padStart(2,'0')} ${String(when.getHours()).padStart(2,'0')}:${String(when.getMinutes()).padStart(2,'0')}`;
+  document.getElementById('pmSrc').innerHTML =
+    `来源：${esc(P.source)} · 更新于 ${ts}<br>` +
+    `已提取：${P.projects.length} 个项目 / ${P.exps.length} 段经历 / ${(P.skillLines.length||P.skillTags.length)} 项技能` +
+    (P.name ? '' : '<br><span style="color:var(--orange)">未能识别姓名，可在下方文本中补充「姓名：xxx」</span>');
+
+  renderSmartProfileState(); renderResumeNotice();
+}
+
+function renderSmartProfileState(){
+  const box = document.getElementById('smartProfileBox');
+  if(!box) return;
+  const st = document.getElementById('smartProfileState');
+  const bf = document.getElementById('smartProfileBrief');
+  const go = document.getElementById('smartProfileGo');
+  if(!PROFILE){
+    st.innerHTML = '<b>尚未设置求职者背景</b>';
+    bf.textContent = 'AI 智能评估需要你的背景信息才能判定人岗匹配。请先在「总览」上传简历/背景文件或输入背景。';
+    go.style.display = '';
+    box.className = 'notice warn';
+  } else {
+    const P = PROFILE;
+    st.innerHTML = `已加载：<b>${esc(P.name || '未识别姓名')}</b>`;
+    bf.innerHTML = [
+      P.eduLine || '教育背景未识别',
+      P.skillTags.length ? '技能：' + P.skillTags.slice(0,6).join('、') : '技能关键词较少',
+      P.projects.length ? '项目：' + P.projects.slice(0,2).map(p=>p.title).join('、') : '暂无项目信息'
+    ].map(esc).join('<br>');
+    go.style.display = '';
+    box.className = 'notice';
+  }
+}
+
+function buildProfileFromInput(){
+  const ta = document.getElementById('pmText');
+  const text = (ta.value || '').trim();
+  if(text.length < 10){ alert('请先上传文件或输入至少 10 个字的求职者背景信息。'); ta.focus(); return; }
+  PROFILE = parseProfileText(text, document.getElementById('pmFile').dataset.name || '手动输入');
+  saveProfile();
+  renderProfileCard();
+  fillResumeFromProfile(false);
+  document.getElementById('pmView').scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
+function editProfile(){
+  document.getElementById('pmSetup').classList.remove('hidden');
+  document.getElementById('pmView').classList.add('hidden');
+  const ta = document.getElementById('pmText');
+  if(!ta.value.trim() && PROFILE) ta.value = PROFILE.raw || '';
+  ta.focus();
+}
+function clearProfileInput(){
+  document.getElementById('pmText').value = '';
+  const fi = document.getElementById('pmFile'); fi.value = ''; delete fi.dataset.name;
+  document.getElementById('pmFileName').innerHTML = '';
+}
+function clearProfile(){
+  if(!confirm('确定清除当前求职者画像？AI 智能评估与简历工作台将恢复为空状态。')) return;
+  PROFILE = null;
+  localStorage.removeItem(PROFILE_KEY);
+  clearProfileInput();
+  renderProfileCard();
+  clearResumeFields();
+}
+
+function saveProfile(){
+  try{ localStorage.setItem(PROFILE_KEY, JSON.stringify(PROFILE)); }catch(e){ console.warn(e); }
+}
+function initProfile(){
+  try{
+    const s = localStorage.getItem(PROFILE_KEY);
+    if(s){ const d = JSON.parse(s); if(d && d.raw){ PROFILE = d; } }
+  }catch(e){}
+  renderProfileCard();
+}
+
+/* —— 文件上传与解析（纯前端，不联网） —— */
+function handleProfileFile(file){
+  if(!file) return;
+  const name = file.name || '未命名文件';
+  const ext = (name.split('.').pop() || '').toLowerCase();
+  const ta = document.getElementById('pmText');
+  const chip = document.getElementById('pmFileName');
+  chip.innerHTML = `<span class="file-chip">📎 正在解析 ${esc(name)}…</span>`;
+
+  const done = (text, srcName)=>{
+    ta.value = String(text || '').trim();
+    document.getElementById('pmFile').dataset.name = srcName;
+    chip.innerHTML = `<span class="file-chip">📎 ${esc(srcName)}</span>`;
+    if(ta.value.length >= 10){
+      PROFILE = parseProfileText(ta.value, srcName);
+      saveProfile(); renderProfileCard(); fillResumeFromProfile(false);
+    } else {
+      alert('未能从该文件中提取到文本内容，请改用 .txt/.md 或在下方手动粘贴背景信息。');
+    }
+  };
+  const fail = (msg)=>{
+    chip.innerHTML = `<span class="file-chip" style="background:var(--red-soft);color:var(--red)">✖ ${esc(msg||'解析失败')}</span>`;
+  };
+
+  if(ext === 'docx'){
+    file.arrayBuffer().then(buf => docxToText(buf))
+      .then(txt => done(txt, name))
+      .catch(e => fail('docx 解析失败：' + (e && e.message ? e.message : '请另存为 .txt 后重试')));
+    return;
+  }
+  if(['txt','md','markdown','csv','json','log','text'].includes(ext)){
+    const r = new FileReader();
+    r.onload = () => done(r.result, name);
+    r.onerror = () => fail('文件读取失败');
+    r.readAsText(file, 'utf-8');
+    return;
+  }
+  fail('暂不支持 .' + ext + '，请另存为 .txt / .md 后上传');
+}
+
+/* 轻量 docx 文本提取：解析 zip 中央目录 → 取 word/document.xml → inflate → 去标签 */
+async function docxToText(buf){
+  const dv = new DataView(buf);
+  let eocd = -1;
+  const min = Math.max(0, buf.byteLength - 65558);
+  for(let i = buf.byteLength - 22; i >= min; i--){
+    if(dv.getUint32(i, true) === 0x06054b50){ eocd = i; break; }
+  }
+  if(eocd < 0) throw new Error('不是有效的 docx 文件');
+  const count = dv.getUint16(eocd + 10, true);
+  let off = dv.getUint32(eocd + 16, true);
+  let target = null;
+  for(let i = 0; i < count; i++){
+    if(off + 46 > buf.byteLength || dv.getUint32(off, true) !== 0x02014b50) break;
+    const method   = dv.getUint16(off + 10, true);
+    const compSize = dv.getUint32(off + 20, true);
+    const nameLen  = dv.getUint16(off + 28, true);
+    const extraLen = dv.getUint16(off + 30, true);
+    const cmtLen   = dv.getUint16(off + 32, true);
+    const localOff = dv.getUint32(off + 42, true);
+    let nm = '';
+    for(let k = 0; k < nameLen; k++) nm += String.fromCharCode(dv.getUint8(off + 46 + k));
+    if(nm === 'word/document.xml') target = {method, compSize, localOff};
+    off += 46 + nameLen + extraLen + cmtLen;
+  }
+  if(!target) throw new Error('未找到 word/document.xml');
+  const lNameLen  = dv.getUint16(target.localOff + 26, true);
+  const lExtraLen = dv.getUint16(target.localOff + 28, true);
+  const start = target.localOff + 30 + lNameLen + lExtraLen;
+  const slice = new Uint8Array(buf, start, target.compSize);
+  let bytes;
+  if(target.method === 0) bytes = slice;
+  else {
+    if(typeof DecompressionStream === 'undefined') throw new Error('当前浏览器不支持解压，请另存为 .txt');
+    const ds = new DecompressionStream('deflate-raw');
+    const stream = new Blob([slice]).stream().pipeThrough(ds);
+    bytes = new Uint8Array(await new Response(stream).arrayBuffer());
+  }
+  let xml = new TextDecoder('utf-8').decode(bytes);
+  xml = xml.replace(/<w:p[ >]/g, '\n<w:p ').replace(/<\/w:p>/g, '\n')
+           .replace(/<w:tab[^>]*\/?>/g, '\t').replace(/<w:br[^>]*\/?>/g, '\n')
+           .replace(/<[^>]+>/g, '')
+           .replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&')
+           .replace(/&quot;/g,'"').replace(/&apos;/g,"'");
+  return xml.replace(/[ \t]+\n/g,'\n').replace(/\n{3,}/g,'\n\n').trim();
+}
+
+/* ================= 匹配度评估 ================= */
+function collectJdKeywords(jd){
+  const jdLower = jd.toLowerCase();
+  const res = {};
+  for(const k of KEYWORDS){
+    if(jdLower.includes(k.word.toLowerCase())){
+      (res[k.dim] = res[k.dim]||[]).push(k);
+    }
+  }
+  return res;
+}
+
+/* 关键词是否具备：有画像时以画像为准，无画像时回退到内置默认（仅用于演示） */
+function kwHas(k){ return PROFILE ? profileHas(PROFILE, [k.word]) : !!k.user; }
+
+function runMatch(){
+  const jd = document.getElementById('jdText').value.trim();
+  if(!jd){ alert("请先粘贴 JD 正文"); return; }
+  const jobType = document.getElementById('jobType').value;
+  const jobName = document.getElementById('jobName').value.trim() || (jobType + " @ 目标公司");
+  const weights = JOB_TYPES[jobType].weights;
+
+  const hit = collectJdKeywords(jd);
+  const detail = [];       // per-dim
+  let total = 0;
+  const baseline = {学历专业:88,技术基础:50,业务知识:50,软技能:50,工具能力:50,加分项:50};
+
+  DIM_LABELS.forEach(dim=>{
+    const w = weights[dim];
+    const kws = hit[dim] || [];
+    let score, matched=[], missing=[];
+    if(kws.length === 0){
+      score = baseline[dim];
+    } else {
+      kws.forEach(k=> (kwHas(k)?matched:missing).push(k.word));
+      // 已有关键词得分高，缺失关键词拉低
+      score = Math.round(matched.length / kws.length * 100);
+      // 学历专业特殊：只要有学历背景即可较高分
+      if(dim==="学历专业") score = 88;
+    }
+    score = Math.max(20, Math.min(98, score));
+    total += score * w / 100;
+    detail.push({dim, w, score, matched, missing});
+  });
+
+  total = Math.round(total);
+  renderRadar(detail);
+  document.getElementById('totalScore').textContent = total + "%";
+  document.getElementById('totalBar').style.width = total + "%";
+  document.getElementById('totalBar').style.background = total>=80 ? "var(--green)" : (total>=60?"var(--orange)":"var(--red)");
+
+  const judge = total>=90 ? "高度匹配，强烈建议投递并重点准备面试。" :
+                total>=80 ? "匹配良好，投递并针对提升点补强简历。" :
+                total>=60 ? "基本匹配，建议先补齐核心缺口再投递。" :
+                total>=40 ? "差距较大，建议系统学习后再评估。" :
+                "严重不匹配，转行成本高，建议更换 JD。";
+  document.getElementById('totalJudge').textContent = "综合判断：" + judge;
+
+  // 维度表格
+  const tb = document.getElementById('dimTable');
+  tb.innerHTML = "";
+  detail.forEach(d=>{
+    const status = d.score>=70 ? '<span class="pill ok">✅ 已满足</span>' :
+                   d.score>=50 ? '<span class="pill mid">⚠️ 需提升</span>' :
+                                 '<span class="pill low">❌ 明显缺失</span>';
+    let kwHtml = "";
+    if(d.matched.length+d.missing.length===0){
+      kwHtml = '<span class="small muted">JD 未显式提及</span>';
+    } else {
+      d.matched.forEach(m=> kwHtml += `<span class="kw hit">${m}</span>`);
+      d.missing.forEach(m=> kwHtml += `<span class="kw miss">${m}</span>`);
+    }
+    tb.innerHTML += `<tr>
+      <td><b>${d.dim}</b></td><td>${d.w}%</td>
+      <td><b style="color:${d.score>=70?'var(--green)':d.score>=50?'var(--orange)':'var(--red)'}">${d.score}</b></td>
+      <td>${status}</td><td>${kwHtml}</td></tr>`;
+  });
+
+  // 分支
+  const bn = document.getElementById('branchNotice');
+  if(total >= 80){
+    bn.className = "notice";
+    bn.innerHTML = `匹配度 <b>${total}% ≥ 80%</b> → 走 <b>简历定制</b> 分支：前往「简历工作台」按「${jobType}」定制简历，然后进入模拟面试。`;
+    const missing = detail.flatMap(d=>d.missing);
+    renderGap("简历优化清单（仍可提升项）", missing, true);
+  } else {
+    bn.className = "notice warn";
+    bn.innerHTML = `匹配度 <b>${total}% ＜ 80%</b> → 走 <b>能力提升</b> 分支：先补齐缺口（见下方规划），或更换 JD 重新评估。`;
+    const missing = detail.flatMap(d=>d.missing);
+    renderGap("能力缺口清单", missing, false);
+  }
+  document.getElementById('matchResult').classList.remove('hidden');
+  document.getElementById('matchResult').scrollIntoView({behavior:'smooth'});
+  // 同步提升规划页
+  window.__lastGaps = detail.flatMap(d=>d.missing);
+  localStorage.setItem('lastGaps', JSON.stringify(window.__lastGaps));
+  localStorage.setItem('lastJobType', jobType);
+}
+
+function renderGap(title, missing, isResume){
+  document.getElementById('gapTitle').textContent = title;
+  const body = document.getElementById('gapBody');
+  if(missing.length === 0){
+    body.innerHTML = '<div class="small muted">未发现明显缺失项，建议直接把精力放在简历打磨与面试准备上。</div>';
+    return;
+  }
+  let rows = "";
+  const seen = new Set();
+  missing.forEach(m=>{
+    if(seen.has(m)) return; seen.add(m);
+    const p = GAP_PLANS[m];
+    if(!p) return;
+    rows += `<tr><td>${m}</td><td>${p.need}</td><td>${p.res}</td><td>${p.dur}</td></tr>`;
+  });
+  body.innerHTML = rows
+    ? `<table class="dim-table"><thead><tr><th>缺口项</th><th>需要补什么</th><th>推荐资源（免费优先）</th><th>预计耗时</th></tr></thead><tbody>${rows}</tbody></table>`
+    : '<div class="small muted">缺口的专项提升方案已收录，详见「提升规划」页。</div>';
+}
+
+function loadSampleJD(){
+  document.getElementById('jobType').value = "安全售前工程师";
+  document.getElementById('jobName').value = "售前工程师 @ 某网络安全厂商";
+  document.getElementById('jdText').value =
+`岗位职责：
+1. 负责网络安全解决方案的售前技术交流、方案设计与宣讲；
+2. 负责招投标技术支持、标书撰写与应标工作；
+3. 与客户对接，挖掘客户需求，输出针对性解决方案；
+4. 配合销售完成产品演示、PoC 测试与答疑。
+
+任职要求：
+1. 本科及以上学历，网络空间安全、计算机相关专业；
+2. 熟悉网络安全基础、等级保护、防火墙、WAF 等安全产品；
+3. 了解渗透测试流程，具备漏洞挖掘基础者优先；
+4. 沟通表达能力强，具备良好的方案讲解与文档撰写能力；
+5. 熟练使用 Office、PPT，有 CISP/NISP 证书优先。`;
+  document.getElementById('matchResult').classList.add('hidden');
+}
+
+function clearJD(){
+  document.getElementById('jdText').value="";
+  document.getElementById('matchResult').classList.add('hidden');
+}
+
+/* 雷达图 */
+function renderRadar(detail){
+  const size=320, cx=size/2, cy=size/2, R=120, n=DIM_LABELS.length;
+  const angle = i => -Math.PI/2 + i*2*Math.PI/n;
+  const pt = (i,r)=> [cx + r*Math.cos(angle(i)), cy + r*Math.sin(angle(i))];
+  let grid="", labels="", ring="";
+  for(let g=1; g<=4; g++){
+    const r=R*g/4;
+    let pts = DIM_LABELS.map((_,i)=>{const [x,y]=pt(i,r);return `${x},${y}`;}).join(" ");
+    grid += `<polygon points="${pts}" fill="none" stroke="#e5e9f2" stroke-width="1"/>`;
+  }
+  for(let i=0;i<n;i++){
+    const [x,y]=pt(i,R);
+    grid += `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="#e5e9f2" stroke-width="1"/>`;
+    const [lx,ly]=pt(i,R+22);
+    labels += `<text x="${lx}" y="${ly}" text-anchor="middle" font-size="12" fill="#4b5563">${DIM_LABELS[i]}</text>`;
+  }
+  let pts = detail.map((d,i)=>{const r=R*d.score/100; const [x,y]=pt(i,r); return `${x},${y}`;}).join(" ");
+  let fill = `<polygon points="${pts}" fill="rgba(58,92,204,0.18)" stroke="var(--primary)" stroke-width="2"/>`;
+  detail.forEach((d,i)=>{const [x,y]=pt(i,R*d.score/100); ring += `<circle cx="${x}" cy="${y}" r="3" fill="var(--primary)"/>`;});
+  document.getElementById('radar').innerHTML =
+    `<svg viewBox="0 0 ${size} ${size}" style="width:100%;height:auto">${grid}${fill}${ring}${labels}</svg>`;
+}
+
+/* ================= 简历工作台 ================= */
+
+/* 注意：本工作台不再内置任何预设个人信息。
+   编辑区内容一律来自「总览 · 求职者画像」（用户自行上传/输入的背景）或用户手工填写。 */
+const RESUME_KEYS = ['f-job','f-name','f-phone','f-email','f-city','f-arrive','f-edu','f-skill','f-project','f-exp','f-eval','resumeJob'];
+const RESUME_STORE_KEY = 'resumeForm.v2';   // v2：废弃旧版含预设信息的缓存
+let __autoFillSnapshot = null;              // 最近一次自动预填的内容，用于识别用户是否手改过
+
+/* 岗位侧重关键词（用于按岗位重新组织已提取的内容） */
+const JOB_FOCUS_KW = {
+  "安全售前工程师":["安全","售前","方案","宣讲","客户","等保","防火墙","WAF","渗透","漏洞","招投标","标书","沟通","讲解"],
+  "安全产品经理":["安全","产品","需求","原型","竞品","用户","规划","PRD","调研","数据"],
+  "需求分析师":["需求","分析","流程","规格","调研","文档","PRD","建模","沟通"],
+  "互联网产品经理":["产品","用户","数据","原型","运营","竞品","增长","体验","策划"],
+  "AI应用管培生":["AI","大模型","Agent","智能体","提示词","LLM","自动化","工作流","机器学习","数据"]
+};
+
+function blocksToText(blocks){
+  return (blocks||[]).map(b=>{
+    let s = b.title + (b.meta ? '｜' + b.meta : '');
+    if(b.bullets && b.bullets.length) s += '\n' + b.bullets.map(x=>'- ' + x).join('\n');
+    return s;
+  }).join('\n\n');
+}
+
+function profileToResume(P){
+  const skillText = (P.skillLines && P.skillLines.length)
+    ? P.skillLines.join('\n')
+    : ((P.skillTags && P.skillTags.length) ? P.skillTags.join('、') : '');
+  return {
+    job:(P.targets && P.targets[0]) || '',
+    name:P.name || '', phone:P.phone || '', email:P.email || '', city:P.city || '',
+    arrive:'', edu:P.eduLine || '', skill:skillText,
+    project:blocksToText(P.projects), exp:blocksToText(P.exps), eval:''
+  };
+}
+
+function rankForJob(list, job){
+  const kws = JOB_FOCUS_KW[job] || [];
+  if(!kws.length) return list.slice();
+  const score = b => {
+    const s = (b.title + ' ' + (b.meta||'') + ' ' + (b.bullets||[]).join(' ')).toLowerCase();
+    return kws.reduce((n,k)=> n + (s.includes(k.toLowerCase()) ? 1 : 0), 0);
+  };
+  return list.map((b,i)=>({b, i, s:score(b)})).sort((x,y)=> y.s - x.s || x.i - y.i).map(o=>o.b);
+}
+
+function rankLinesForJob(text, job){
+  const lines = String(text||'').split('\n').filter(l=>l.trim());
+  if(lines.length < 2) return text;
+  const kws = JOB_FOCUS_KW[job] || [];
+  if(!kws.length) return text;
+  const score = l => { const s = l.toLowerCase(); return kws.reduce((n,k)=> n + (s.includes(k.toLowerCase()) ? 1 : 0), 0); };
+  return lines.map((l,i)=>({l,i,s:score(l)})).sort((x,y)=> y.s - x.s || x.i - y.i).map(o=>o.l).join('\n');
+}
+
+function setResumeFields(d){
+  document.getElementById('f-job').value    = d.job    || '';
+  document.getElementById('f-name').value   = d.name   || '';
+  document.getElementById('f-phone').value  = d.phone  || '';
+  document.getElementById('f-email').value  = d.email  || '';
+  document.getElementById('f-city').value   = d.city   || '';
+  document.getElementById('f-arrive').value = d.arrive || '';
+  document.getElementById('f-edu').value    = d.edu    || '';
+  document.getElementById('f-skill').value  = d.skill  || '';
+  document.getElementById('f-project').value= d.project|| '';
+  document.getElementById('f-exp').value    = d.exp    || '';
+  document.getElementById('f-eval').value   = d.eval   || '';
+}
+
+function getResumeFields(){
+  const o = {}; RESUME_KEYS.forEach(k=>{ const el=document.getElementById(k); if(el) o[k]=el.value; }); return o;
+}
+
+function hasUserResumeEdits(){
+  if(!__autoFillSnapshot) return RESUME_KEYS.some(k=>{ const el=document.getElementById(k); return el && el.value.trim(); });
+  const cur = getResumeFields();
+  return RESUME_KEYS.some(k=> (cur[k]||'') !== (__autoFillSnapshot[k]||''));
+}
+
+function clearResumeFields(){
+  RESUME_KEYS.forEach(k=>{ if(k!=='resumeJob'){ const el=document.getElementById(k); if(el) el.value=''; } });
+  __autoFillSnapshot = null;
+  try{ localStorage.removeItem(RESUME_STORE_KEY); }catch(e){}
+  renderResume(); renderResumeNotice();
+}
+
+/* 从画像预填编辑区；force=true 时跳过覆盖确认 */
+function fillResumeFromProfile(force){
+  if(!PROFILE){
+    renderResumeNotice();
+    return false;
+  }
+  if(!force && hasUserResumeEdits()){
+    if(!confirm('编辑区已有内容，确定用「求职者画像」的内容覆盖当前填写？')) return false;
+  }
+  const job = document.getElementById('resumeJob').value;
+  const d = profileToResume(PROFILE);
+  if(!d.job) d.job = job;
+  // 按当前岗位侧重排序：更相关的项目/经历/技能排在前面
+  d.project = blocksToText(rankForJob(PROFILE.projects || [], job));
+  d.exp     = blocksToText(rankForJob(PROFILE.exps || [], job));
+  d.skill   = rankLinesForJob(d.skill, job);
+  setResumeFields(d);
+  __autoFillSnapshot = getResumeFields();
+  renderResume(); renderResumeNotice();
+  return true;
+}
+
+function refillResume(force){
+  if(!PROFILE){
+    alert('尚未设置求职者画像，请先到「总览」上传简历/背景文件或输入背景信息。');
+    switchTab('overview'); return;
+  }
+  if(fillResumeFromProfile(force)){
+    const tip = document.getElementById('fillTip');
+    if(tip){ tip.textContent = '已按画像预填'; setTimeout(()=>{ if(tip.textContent==='已按画像预填') tip.textContent=''; }, 2500); }
+  }
+}
+
+/* 切换定制岗位：改写求职意向，并按该岗位侧重重新组织内容排序 */
+function applyJobFocus(){
+  const job = document.getElementById('resumeJob').value;
+  const jobEl = document.getElementById('f-job');
+  if(!jobEl.value.trim() || (__autoFillSnapshot && jobEl.value === __autoFillSnapshot['f-job'])) jobEl.value = job;
+  const sk = document.getElementById('f-skill');
+  if(sk.value.trim()) sk.value = rankLinesForJob(sk.value, job);
+  const pj = document.getElementById('f-project');
+  if(pj.value.trim()) pj.value = rankLinesForJob(pj.value.split(/\n\s*\n/).join('\n'), job);
+  renderResume(); saveForm();
+}
+
+function renderResumeNotice(){
+  const box = document.getElementById('resumeNotice');
+  const body = document.getElementById('resumeNoticeBody');
+  const tip = document.getElementById('fillTip');
+  if(!box) return;
+  if(!PROFILE){
+    box.classList.remove('hidden');
+    body.innerHTML = '编辑区当前为空。请先在「<b>总览 · 求职者画像</b>」上传简历/背景文件或输入背景信息，系统会自动提取内容并预填到下方编辑区。' +
+      '<div class="row mt8"><button class="btn ghost" onclick="switchTab(\'overview\')">前往设置求职者背景 →</button></div>';
+    if(tip) tip.textContent = '（未预填）';
+  } else {
+    const empty = !RESUME_KEYS.some(k=>k!=='resumeJob' && document.getElementById(k).value.trim());
+    if(empty){
+      box.classList.remove('hidden');
+      body.innerHTML = '已识别到求职者画像，但编辑区仍为空。点击下方「<b>↻ 从画像重新预填</b>」即可自动填充。' +
+        '<div class="row mt8"><button class="btn ghost" onclick="refillResume(true)">立即预填</button></div>';
+      if(tip) tip.textContent = '（未预填）';
+    } else {
+      box.classList.add('hidden');
+      if(tip) tip.textContent = __autoFillSnapshot ? '（已按画像预填，可自由修改）' : '';
+    }
+  }
+}
+
+function renderResume(){
+  const v = id => document.getElementById(id).value;
+  // 解析项目/经历块（空行分隔）
+  function parseBlocks(text){
+    return text.split(/\n\s*\n/).map(b=>{
+      const lines = b.split('\n').filter(l=>l.trim());
+      if(!lines.length) return null;
+      const title = lines[0];
+      const items = lines.slice(1).map(l=>l.replace(/^[-*]\s*/,''));
+      return {title, items};
+    }).filter(Boolean);
+  }
+  function blocksHtml(blocks){
+    return blocks.map(b=>{
+      const parts = b.title.split('｜');
+      const left = parts[0], right = parts.slice(1).join('｜');
+      const lis = b.items.map(i=>`<li>${esc(i)}</li>`).join('');
+      return `<h4><span>${esc(left)}</span><span class="right">${esc(right)}</span></h4><ul>${lis}</ul>`;
+    }).join('');
+  }
+  function skillHtml(text){
+    const items = text.split('\n').filter(l=>l.trim());
+    return '<ul>' + items.map(i=>`<li>${esc(i.replace(/^\d+\.\s*/,''))}</li>`).join('') + '</ul>';
+  }
+  const name = v('f-name') || '姓名';
+  const job = v('f-job') || '求职意向';
+  const eduParts = (v('f-edu')||'').split(/[·|]/).map(s=>s.trim());
+  const eduLeft = eduParts[0]||'', eduMid = eduParts[1]||'', eduRight = eduParts.slice(2).join(' · ');
+  const P = PROFILE || {};
+  const ageBit = [P.age ? P.age + ' 岁' : '', /应届|毕业/.test(P.raw||'') ? '应届毕业生' : ''].filter(Boolean).join(' · ');
+  const html = `
+    <div class="rhead">
+      <div>
+        <div class="rname">${esc(name)}</div>
+        <div class="rjob">求职意向：${esc(job)}</div>
+        <div class="rinfo" style="margin-top:8px">
+          电话：${esc(v('f-phone'))}<br>
+          邮箱：${esc(v('f-email'))}
+        </div>
+      </div>
+      <div class="rinfo" style="text-align:right">
+        ${esc(ageBit)}<br>
+        现住址：${esc(v('f-city'))}<br>
+        到岗时间：${esc(v('f-arrive'))}
+      </div>
+    </div>
+    <h4><span>🎓 教育背景</span><span class="right">${esc(eduMid||'')}</span></h4>
+    <div class="small">${esc(eduLeft)} &nbsp; ${esc(eduRight)}</div>
+    <h4><span>🔧 专业技能</span></h4>
+    ${skillHtml(v('f-skill'))}
+    <h4><span>🎯 项目经历</span></h4>
+    ${blocksHtml(parseBlocks(v('f-project')))}
+    <h4><span>🏢 实习 / 实践经历</span></h4>
+    ${blocksHtml(parseBlocks(v('f-exp')))}
+    <h4><span>✨ 自我评价</span></h4>
+    <div class="eval">${esc(v('f-eval'))}</div>`;
+  document.getElementById('resumePreview').innerHTML = html;
+  saveForm();
+}
+
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function saveForm(){
+  const o = getResumeFields();
+  try{ localStorage.setItem(RESUME_STORE_KEY, JSON.stringify(o)); }catch(e){}
+}
+/* 初始化简历工作台：优先恢复用户自己保存的内容，否则从画像预填，都没有则留空 */
+function initResume(){
+  let restored = false;
+  try{
+    const o = localStorage.getItem(RESUME_STORE_KEY);
+    if(o){
+      const d = JSON.parse(o);
+      Object.keys(d).forEach(k=>{ const el=document.getElementById(k); if(el) el.value=d[k]; });
+      if(RESUME_KEYS.some(k=>k!=='resumeJob' && (d[k]||'').trim())) restored = true;
+    }
+  }catch(e){}
+  if(!restored && PROFILE) fillResumeFromProfile(true);
+  renderResume();
+  renderResumeNotice();
+}
+
+function exportMarkdown(){
+  const v = id => document.getElementById(id).value;
+  const name=v('f-name'), job=v('f-job');
+  let md = `# ${name}\n\n> 求职意向：${job}\n\n`;
+  md += `| 姓名 | ${name} | 求职意向 | ${job} |\n|---|---|---|---|\n`;
+  md += `| 电话 | ${v('f-phone')} | 邮箱 | ${v('f-email')} |\n`;
+  md += `| 现住址 | ${v('f-city')} | 到岗时间 | ${v('f-arrive')} |\n\n`;
+  md += `## 教育背景\n\n${v('f-edu')}\n\n`;
+  md += `## 专业技能\n\n${v('f-skill')}\n\n`;
+  md += `## 项目经历\n\n${v('f-project')}\n\n`;
+  md += `## 实习 / 实践经历\n\n${v('f-exp')}\n\n`;
+  md += `## 自我评价\n\n${v('f-eval')}\n`;
+  navigator.clipboard.writeText(md).then(()=>{
+    const b=document.querySelector('[onclick="exportMarkdown()"]'); const t=b.textContent;
+    b.textContent="✅ 已复制"; setTimeout(()=>b.textContent=t,1500);
+  }).catch(()=>{
+    prompt("复制失败，请手动复制：", md);
+  });
+}
+
+/* ================= 提升规划 ================= */
+function genPlan(){
+  const job = document.getElementById('planJob').value;
+  const gaps = JSON.parse(localStorage.getItem('lastGaps')||'[]');
+  const seen = new Set(); const list=[];
+  gaps.forEach(g=>{ if(!seen.has(g)){ seen.add(g); const p=GAP_PLANS[g]; if(p) list.push({g,p}); }});
+  const box = document.getElementById('planResult');
+  if(list.length===0){
+    box.innerHTML = `<div class="card notice warn">暂无缺口数据。请先到「匹配度评估」页跑一次评估，让缺口自动同步到这里；或直接更换岗位生成示例规划。</div>`;
+    return;
+  }
+  const totalWeeks = Math.max(2, Math.ceil(list.length * 1.5));
+  let phaseRows = list.map(({g,p},i)=>{
+    const wk = `W${i+1}`;
+    return `<tr><td>${wk}</td><td>${p.need}</td><td>${p.res}</td><td>${p.dur}</td></tr>`;
+  }).join('');
+  box.innerHTML = `
+    <div class="card">
+      <h3>📚 ${job} · 能力提升规划</h3>
+      <div class="small muted mb16">依据最近一次匹配度评估的缺口自动生成，共 ${list.length} 项，预计 ${totalWeeks} 周完成。学习资源优先免费。</div>
+      <h3 style="margin-top:0">阶段一 · 基础补全（第 1-${Math.ceil(totalWeeks/2)} 周）</h3>
+      <table class="dim-table"><thead><tr><th>周次</th><th>学习内容</th><th>学习资源</th><th>预计耗时</th></tr></thead><tbody>${phaseRows}</tbody></table>
+      <h3>阶段二 · 实战强化</h3>
+      <ul style="padding-left:18px;line-height:2">
+        <li>每学完一项，用一个小项目/一篇笔记/一次模拟方案输出验证掌握程度。</li>
+        <li>把新技能写进简历对应条目，回到「简历工作台」更新。</li>
+      </ul>
+      <h3>阶段三 · 面试准备</h3>
+      <ul style="padding-left:18px;line-height:2">
+        <li>回到「模拟面试」页，针对「${job}」分类刷题，逐题自评。</li>
+        <li>全部完成后回到「匹配度评估」重新评估，匹配度 ≥80% 即可投递。</li>
+      </ul>
+      <div class="notice mt16">提示：若预计学习时间超过 2 周且岗位急招，建议更换 JD 或优先投递匹配度更高的岗位。</div>
+    </div>`;
+}
+
+/* ================= 模拟面试 ================= */
+const INTERVIEW = [
+  {cat:"自我介绍", focus:"1-2 分钟，突出匹配度", q:"请用 1-2 分钟做一个自我介绍。",
+   hint:"总分总结构：① 基本信息（学校/专业/应届）；② 2-3 个与岗位相关的亮点（技术项目 / AI 工具链 / 活动策划），用 STAR 一句话带过；③ 结尾点题「为什么投这个岗」。避免背简历，突出「无经验但学习快、能落地」。", },
+  {cat:"技术概念", focus:"安全/加密/AI 基础", q:"能简单讲讲同态加密是什么、它解决了什么问题吗？",
+   hint:"同态加密：在密文上直接计算、结果解密后与明文计算结果一致。解决「数据可用不可见」的隐私问题。可结合你的实际项目/毕设讲：在哪一环用到密文计算、如何保护隐私。用生活化比喻（带锁的盒子）会加分。", },
+  {cat:"技术概念", focus:"安全/加密/AI 基础", q:"CKKS 和 RSA 这类加密有什么区别？",
+   hint:"RSA 是非对称加密，支持的是「加解密」，密文不参与运算；CKKS 是全同态加密，支持对密文做加法和近似乘法，适合浮点数/机器学习推理。点出「全同态」这个关键词即可。", },
+  {cat:"技术概念", focus:"AI 认知", q:"你用过哪些 AI 工具？举例说明你如何用 AI 提高效率。",
+   hint:"先列举你实际用过的 LLM 与 Agent/效率工具，再举 1-2 个真实场景实例（自动化重复劳动、辅助开发/写作、搭建工作流等），落脚到「会用 AI 拆解需求、提升效率」。若没怎么用过，诚实说明并讲你打算如何上手。", },
+  {cat:"简历深挖", focus:"项目经历", q:"讲讲你项目/毕设中遇到的最大难点，以及怎么解决的？",
+   hint:"用 STAR：难点（卡在哪、为什么难）→ 方案（如何选型、查资料、借助工具解决）→ 结果（最终达成什么）。突出「主动解决问题 + 学习落地」能力。", },
+  {cat:"简历深挖", focus:"项目经历", q:"挑一个你最满意的项目，讲讲它解决了什么问题、你是怎么设计的？",
+   hint:"用 STAR：情境（痛点是什么）→ 任务（要达到什么）→ 行动（你具体做了什么，用了什么技术/方法）→ 结果（可量化的产出）。挑与你目标岗位最相关的项目来讲，突出你在其中的个人贡献。", },
+  {cat:"简历深挖", focus:"实习经历", q:"讲一段你最值得说的实习或实践经历，你如何判断自己做得够不够好？",
+   hint:"选与目标岗位相关的一段经历；用 2-3 个你实际关注的指标 + 具体数字说明结果；如果当时没量化，就讲你事后如何复盘改进。体现「结果导向」意识，别只念实习抬头。", },
+  {cat:"行为面试", focus:"宝洁八大问", q:"请举例说明你如何协调一个团队完成任务。",
+   hint:"挑一段真实的团队协作经历：背景（几人、什么目标）→ 分工（你负责什么）→ 协作（如何对齐进度、处理分歧、主动补位）→ 结果（量化产出）。突出「分工明确、主动补位、以结果为导向」。", },
+  {cat:"行为面试", focus:"宝洁八大问", q:"你遇到过最有挑战的一件事是什么？",
+   hint:"选能体现「从 0 到 1」或「迎难而上」的真实经历：当时面临什么未知/困难 → 你的学习与解决路径 → 最终结果。强调学习方法和抗压能力，避免夸夸其谈。", },
+  {cat:"行为面试", focus:"宝洁八大问", q:"你最大的缺点是什么？",
+   hint:"诚实但可控：选一个真实、与岗位关联的短板，重点讲你已在采取的改进方法（刻意练习、结构化框架、工具辅助等）。切忌说「完美主义」等套路或暴露硬伤。", },
+  {cat:"产品思维", focus:"需求分析", q:"如果让你为一款安全产品设计一个新功能，你会怎么做？",
+   hint:"四步法：① 明确目标用户和痛点（从真实场景出发）；② 竞品/现状调研；③ 用 AI 辅助快速产出原型与需求文档；④ 设计验收指标。展示「痛点 → 方案 → 验证」闭环，而不是空谈功能。", },
+  {cat:"产品思维", focus:"用户研究", q:"如何判断用户真正需要什么功能？",
+   hint:"不要只看用户说什么，要看用户做什么：看行为数据（使用频率、流失点）、访谈追问「为什么」、区分「需要」和「想要」。结合游戏策划时用数据反推需求的经历。", },
+  {cat:"职业规划", focus:"岗位匹配", q:"你为什么想从事这个岗位？",
+   hint:"三层递进：① 兴趣（对 AI / 安全 / 产品有持续探索）；② 能力匹配（技术背景 + 需求拆解 + AI 工具）；③ 价值（想从 AI 使用者成长为工作流设计者）。避免「贵公司很好」这类空话。", },
+  {cat:"职业规划", focus:"岗位匹配", q:"未来 3 年你的职业规划是什么？",
+   hint:"短期（1 年）：快速上手岗位、补齐短板（沟通/业务）；中期（2-3 年）：成为能独当一面的骨干，在 AI + 安全/产品方向深耕。体现稳定性和成长意愿，不要说「想创业」等不稳定信号。", },
+  {cat:"案例面试", focus:"逻辑思维", q:"假设你要向一个完全不懂技术的客户解释「为什么需要买我们的安全产品」，你会怎么讲？",
+   hint:"用类比和结果说话：把「防护」比作「保险/门锁」，先讲风险损失（发生安全事故的代价），再讲产品如何兜底，最后讲投入产出。体现「把技术翻译成业务价值」的售前能力。", },
+];
+
+function renderInterview(){
+  const cats = ["全部", ...new Set(INTERVIEW.map(i=>i.cat))];
+  const chips = document.getElementById('ivChips');
+  chips.innerHTML = cats.map((c,i)=>`<span class="chip ${i===0?'active':''}" data-cat="${c}" onclick="filterIv('${c}',this)">${c}</span>`).join('');
+  renderIvList("全部");
+}
+function filterIv(cat, el){
+  document.querySelectorAll('#ivChips .chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  renderIvList(cat);
+}
+function renderIvList(cat){
+  const list = INTERVIEW.filter(i=>cat==="全部"||i.cat===cat);
+  document.getElementById('ivList').innerHTML = list.map((i,idx)=>`
+    <div class="q-item">
+      <div class="q">${i.q}</div>
+      <div class="meta"><span class="tag blue">${i.cat}</span><span>${i.focus}</span></div>
+      <div class="row mt8"><button class="btn ghost" onclick="toggleAns(this)">💡 参考要点</button></div>
+      <div class="ans">${i.hint}</div>
+    </div>`).join('');
+}
+function toggleAns(btn){ btn.parentElement.nextElementSibling.classList.toggle('open'); }
+function toggleHint(){ document.getElementById('ivHint').classList.toggle('open'); }
+
+function drawQuestion(){
+  const job = document.getElementById('ivJob').value;
+  const aiPool = (__aiQuestions||[]).map(q=>({cat:q.cat, focus:q.why||'AI 动态题', q:q.q, hint:q.hint+(q.depth?`<br><br><b>可能的追问：</b>${q.depth}`:'')}));
+  const pool = [...INTERVIEW, ...aiPool]; // 静态题库 + 已生成的 AI 针对性题目
+  const q = pool[Math.floor(Math.random()*pool.length)];
+  document.getElementById('ivStage').classList.remove('hidden');
+  document.getElementById('ivQ').textContent = q.q;
+  document.getElementById('ivCat').innerHTML = `<span class="tag blue">${q.cat}</span>`;
+  document.getElementById('ivFocus').textContent = q.focus;
+  document.getElementById('ivHint').innerHTML = q.hint;
+  document.getElementById('ivHint').classList.remove('open');
+  document.getElementById('ivAns').value = "";
+  document.getElementById('ivRate').value = "0";
+  document.getElementById('ivStage').scrollIntoView({behavior:'smooth'});
+}
+function saveRating(){
+  const r = document.getElementById('ivRate').value;
+  if(r==="0"){ alert("请先打分"); return; }
+  const q = document.getElementById('ivQ').textContent;
+  const log = document.getElementById('ivLog');
+  log.innerHTML += `<div class="small" style="margin:6px 0">📝 「${q.slice(0,28)}…」 自评 <b>${r}/10</b></div>`;
+  document.getElementById('ivRate').value="0";
+}
+
+/* ================= AI 智能评估（能力模型法 + 语义化） ================= */
+/* AI 结果数据契约 ver:"ai-eval-v1":
+{
+  job:"岗位名", company:"可选", match_pct:82,
+  gate:[{req:"本科及以上", eval:"满足", pass:true, note:"..."}],
+  soft:[{dim:"软技能", evidence:"沟通是短板", score:6, gap:"结构化表达练习", plan:"..."}],
+  verdict:{ok:true, label:"可投递 / 需补硬性 / 需补软性", summary:"..."},
+  highlights:["..."], risks:["..."], interview_focus:["..."]
+} */
+/* ================= AI 智能评估引擎（能力模型法 · 本地运行） ================= */
+/* 求职者信息全部来自「总览 · 求职者画像」，引擎中不内置任何预设个人数据 */
+function candidateInfo(){
+  const P = PROFILE || {};
+  return {
+    name: P.name || '求职者',
+    eduLevel: P.degree || '',
+    school: P.school || (P.eduLine || '').slice(0,18) || '未填写',
+    major: P.major || '未填写',
+    certs: (P.certs && P.certs.length) ? P.certs.join('、') : '简历未体现',
+    weaknesses: (P.weaknesses && P.weaknesses.length) ? P.weaknesses.join('、') : '简历未体现',
+    topProject: (P.projects && P.projects.length) ? P.projects[0].title : '',
+    topExp: (P.exps && P.exps.length) ? P.exps[0].title : '',
+    topSkills: (P.skillTags && P.skillTags.length) ? P.skillTags.slice(0,5).join('、') : ''
+  };
+}
+function techHas(t){ return profileHas(PROFILE, t.kws); }
+
+const EDU_RANK = {专科:1, 大专:1, 本科:2, 学士:2, 硕士:3, 研究生:3, 博士:4};
+function eduRank(s){ for(const k in EDU_RANK){ if(s && String(s).includes(k)) return EDU_RANK[k]; } return 0; }
+
+/* 技术/能力需求库：关键词出现在 JD 中即视为岗位需求；是否具备由画像判定 */
+const TECH_REQS = [
+  {kws:["等保","等级保护"], label:"等级保护（等保 2.0）", has:false},
+  {kws:["防火墙"], label:"防火墙", has:false},
+  {kws:["WAF"], label:"WAF", has:false},
+  {kws:["IDS"], label:"IDS/IPS", has:false},
+  {kws:["IPS"], label:"IDS/IPS", has:false},
+  {kws:["渗透"], label:"渗透测试", has:false},
+  {kws:["漏洞"], label:"漏洞原理 / OWASP", has:false},
+  {kws:["云安全"], label:"云安全", has:false},
+  {kws:["数据安全"], label:"数据安全", has:false},
+  {kws:["安全运营","SOC"], label:"安全运营 / SOC", has:false},
+  {kws:["同态加密","密码学","加密"], label:"密码学 / 同态加密", has:true},
+  {kws:["机器学习","深度学习","大模型","Agent"], label:"AI / 机器学习 / Agent", has:true},
+  {kws:["Python"], label:"Python", has:true},
+  {kws:["Java"], label:"Java", has:true},
+  {kws:["C++","C 语言"], label:"C / C++", has:true},
+  {kws:["Axure","墨刀","Figma","原型"], label:"原型设计工具", has:false},
+  {kws:["SQL","MySQL","数据库"], label:"SQL / 数据库", has:false},
+  {kws:["Linux"], label:"Linux", has:false},
+  {kws:["数据分析"], label:"数据分析", has:true},
+  {kws:["TCP/IP","网络协议","HTTP"], label:"网络协议（HTTP/TCP）", has:true},
+  {kws:["项目管理"], label:"项目管理", has:true},
+  {kws:["招投标","标书"], label:"招投标 / 标书", has:false},
+  {kws:["用户研究","竞品分析"], label:"用户研究 / 竞品分析", has:false},
+  {kws:["PRD","需求文档","需求分析"], label:"需求分析 / PRD", has:true},
+];
+
+function clamp(v,a,b){ return Math.max(a,Math.min(b,v)); }
+
+function detectEduGate(jd){
+  const C = candidateInfo();
+  const cand = eduRank(C.eduLevel);
+  const ev = C.school + (C.eduLevel ? "·" + C.eduLevel : "");
+  let req = "", rank = 0;
+  if(/博士/.test(jd)){ req = "博士及以上学历"; rank = 4; }
+  else if(/硕士|研究生/.test(jd)){ req = "硕士及以上学历"; rank = 3; }
+  else if(/本科|学士|全日制|应届/.test(jd)){ req = "本科及以上学历"; rank = 2; }
+  else if(/专科|大专/.test(jd)){ req = "专科及以上学历"; rank = 1; }
+  if(!req) return {req:"学历（JD 未明确）", type:"学历", evidence:ev, pass:true, note:"未强调学历限制"};
+  if(!cand) return {req, type:"学历", evidence:ev || "简历未体现学历", pass:false, note:"画像未识别到学历信息，请补充教育背景"};
+  const pass = cand >= rank;
+  return {req, type:"学历", evidence:ev, pass,
+    note: pass ? "满足学历门槛" : `要求${req.replace("及以上学历","")}，画像显示为「${C.eduLevel}」，硬性不满足`};
+}
+
+function detectMajorGate(jd){
+  const C = candidateInfo();
+  if(/专业不限|不限专业/.test(jd)) return {req:"专业不限", type:"专业", evidence:C.major, pass:true, note:"JD 不限专业"};
+  if(/计算机|软件|网络|网安|信息安全|网络安全|空间安全|电子信息|通信|自动化|数学|统计|理工|相关专业/.test(jd)){
+    const related = /计算机|软件|网络|网安|信息安全|网络安全|空间安全|电子信息|通信|自动化|数学|统计|人工智能|数据/.test(C.major);
+    return {req:"计算机/网络安全等相关专业", type:"专业", evidence:C.major, pass:related,
+      note: related ? "专业方向与 JD 要求相关" : `画像专业为「${C.major}」，与 JD 要求的相关专业存在偏差`};
+  }
+  if(/金融|会计|法律|法学|医学|临床|土木|机械|材料|化工|新闻|外语|英语|历史|哲学|护理|教育/.test(jd))
+    return {req:"对口专业", type:"专业", evidence:C.major, pass:false, note:`专业方向（${C.major}）与 JD 要求的领域差异较大`};
+  return {req:"专业（JD 未明确）", type:"专业", evidence:C.major, pass:true, note:"未强调专业限制"};
+}
+
+/* 从 JD 抽取硬性/软性技术需求 */
+function extractTechReqs(jd){
+  const hard=[], pref=[];
+  for(const t of TECH_REQS){
+    let idx=-1;
+    for(const k of t.kws){ idx=jd.indexOf(k); if(idx>=0) break; }
+    if(idx<0) continue;
+    const before = jd.slice(Math.max(0,idx-14), idx);
+    const after  = jd.slice(idx, idx+14);
+    const softMark = /优先|加分|了解|者优先|更佳|最好|熟悉者|可接受/.test(before+after);
+    const hardMark = /熟悉|精通|掌握|具备|必须|要求|扎实|熟练掌握|扎实掌握/.test(before);
+    (hardMark || !softMark ? hard : pref).push(t);
+  }
+  return {hard, pref};
+}
+
+function buildGate(jd){
+  const gate = [ detectEduGate(jd), detectMajorGate(jd) ];
+  const {hard} = extractTechReqs(jd);
+  hard.slice(0,3).forEach(t=>{
+    const has = techHas(t);
+    gate.push({
+      req: t.label, type:"技能",
+      evidence: has ? "画像中已体现相关能力/经历" : "背景中未体现该项",
+      pass: has,
+      note: has ? "满足岗位技能要求" : "建议快速补齐该项基础知识"
+    });
+  });
+  const C = candidateInfo();
+  const certText = (PROFILE && PROFILE.posText) || '';
+  if(/CISP/.test(jd) && !/优先|加分/.test(jd)){
+    const has = /CISP/.test(certText);
+    gate.push({req:"CISP 认证", type:"证书", evidence:C.certs, pass:has,
+      note: has ? "画像中已体现 CISP" : /NISP/.test(certText) ? "持有 NISP（校园版 CISP），正式 CISP 通常需工作后考取" : "背景中未见 CISP，建议入职后考取"});
+  } else if(/CISP|NISP/.test(jd)){
+    const has = /CISP|NISP/.test(certText);
+    gate.push({req:"CISP/NISP 证书（优先项）", type:"证书", evidence:C.certs, pass:has,
+      note: has ? "已持有相关安全证书，属加分项" : "暂无相关证书，属优先项不影响硬性门槛"});
+  }
+  return gate;
+}
+
+function buildSoft(jd){
+  const P = PROFILE || {};
+  const soft = [];
+  const techKws = TECH_REQS.filter(t=>t.kws.some(k=>jd.includes(k)));
+  const matched = techKws.filter(t=>techHas(t));
+  const miss = techKws.filter(t=>!techHas(t));
+  // 技术基础按「可迁移功底」评估，具体产品缺口已由硬性门槛判定，避免重复扣分
+  const skillEvidence = (P.skillTags && P.skillTags.length)
+    ? P.skillTags.slice(0,6).join("、")
+    : ((P.skillLines && P.skillLines.length) ? P.skillLines[0].slice(0,40) : "背景中未提取到技能关键词");
+  const sc = techKws.length ? clamp(5 + Math.round((matched.length/techKws.length)*4), 4, 9) : 7;
+  soft.push({dim:"技术基础（可迁移）", evidence:skillEvidence, score:sc,
+    note: techKws.length ? `JD 列出 ${techKws.length} 项技术，直接覆盖 ${matched.length} 项；未覆盖项见硬性门槛` : "JD 未列具体技术栈，按背景中的技术储备评估",
+    gap: miss.map(t=>t.label).join("、")||"无", plan: miss.length ? "按缺口关键词针对性学习（详见提升规划页）" : "—"});
+
+  const commReq = /沟通|表达|演讲|汇报|宣讲|讲解|对接|谈判|客户|商务/.test(jd);
+  const weakText = (P.weaknesses || []).join("、");
+  const commWeak = /沟通|表达|演讲|汇报|口才|不自信|内向|社恐/.test(weakText + " " + (P.negText||""));
+  soft.push({dim:"沟通表达",
+    evidence: commWeak ? `自评短板：${(weakText||P.negText||"").slice(0,36)}`
+                       : ((P.exps && P.exps.length) ? `有实践/实习经历：${P.exps[0].title}` : "背景中未见明显沟通短板"),
+    score: commWeak ? (commReq ? 4 : 5) : (commReq ? 6 : 7),
+    note: commWeak ? "画像中自评为短板" + (commReq ? "，恰是本岗位核心能力，需重点训练" : "，本岗位对此要求一般")
+                   : (commReq ? "背景中未见明显短板，但本岗位对沟通要求高，仍需准备实例" : "本岗位对此要求一般"),
+    gap: commWeak ? "结构化表达（STAR/金字塔）与临场练习" : "—",
+    plan: commWeak ? "每日 1 分钟口述练习 + 模拟方案宣讲" : "—"});
+
+  const docHas = profileHas(P, ["PPT","Word","Excel","WPS","Office","文档","方案","策划","PRD","报告","写作"]);
+  soft.push({dim:"文档与方案能力",
+    evidence: docHas ? "背景中体现文档/方案类产出（PPT/Word/策划案等）" : "背景中未见文档类产出",
+    score: docHas ? 7 : 5,
+    note: docHas ? "有实际方案或文档产出经验" : "建议在背景中补充文档/方案产出经历，或尽快补强",
+    gap: docHas ? "售前方案 / 标书 / PRD 等专业格式" : "基础文档撰写与结构化表达",
+    plan: docHas ? "参考标书/PRD 模板拆解练习" : "先用 STAR 结构整理现有经历"});
+
+  const aiHas = profileHas(P, ["AI","大模型","Agent","智能体","LLM","ChatGPT","DeepSeek","Qwen","GLM","提示词","Ollama","机器学习","深度学习"]);
+  soft.push({dim:"AI 工具与学习能力",
+    evidence: aiHas ? "背景中体现 AI 工具 / 大模型使用经验" : "背景中未见 AI 工具使用经验",
+    score: aiHas ? 9 : 5,
+    note: aiHas ? "可迁移到 AI 相关岗位的核心竞争力" : "当前 AI 岗位普遍看重此项，建议尽快上手并写进简历",
+    gap: aiHas ? "—" : "主流 LLM 与 Agent 工具实操",
+    plan: aiHas ? "—" : "选 1-2 款 LLM + Agent 工具做一个小项目"});
+
+  const toolsReq = /Axure|墨刀|Figma|原型|Visio|Xmind|SQL|数据库|Linux/.test(jd);
+  const toolHas = profileHas(P, ["Axure","Figma","墨刀","Visio","Xmind","SQL","Linux","数据库"]);
+  const toolEv = (P.skillTags || []).filter(s=>/Office|PPT|Word|Excel|WPS|PS|剪映|秀米|Axure|Figma|SQL|Linux|Unity/.test(s)).slice(0,5).join("、");
+  soft.push({dim:"工具能力",
+    evidence: toolEv || (toolHas ? "背景中体现部分专业工具" : "背景中未见明确工具清单"),
+    score: toolsReq ? (toolHas ? 7 : 5) : 7,
+    note: toolsReq ? (toolHas ? "JD 所需专业工具基本覆盖" : "部分专业工具（原型/SQL/Linux 等）尚未体现") : "JD 所需通用工具已覆盖",
+    gap: (toolsReq && !toolHas) ? "Axure/Figma 原型、SQL、Linux" : "—",
+    plan: (toolsReq && !toolHas) ? "原型工具官方教程 1-2 周 + SQL 基础练习" : "—"});
+  return soft;
+}
+
+function runAiEval(job, jd){
+  const gate = buildGate(jd);
+  const soft = buildSoft(jd);
+  const hardFails = gate.filter(g=>!g.pass);
+  const eduFail = hardFails.some(g=>g.type==="学历"||g.type==="专业");
+  const softAvg = soft.reduce((s,x)=>s+x.score,0)/Math.max(1,soft.length);
+
+  let match;
+  if(eduFail) match = 40;
+  else if(hardFails.length>0) match = clamp(Math.round(50 + softAvg*3), 45, 72);
+  else match = clamp(Math.round(62 + softAvg*3.5), 60, 96);
+
+  const ok = !eduFail && hardFails.length===0;
+  let label, summary;
+  if(!ok){
+    label = "补硬性缺口";
+    summary = eduFail ? "学历或专业存在硬性门槛不满足，建议优先补齐或转投对口/不限岗位。" :
+              `核心技能存在硬性缺口（${hardFails.map(g=>g.req).join("、")}），建议先补齐再投递。`;
+  } else if(match>=80){
+    label = "可投递"; summary = "硬性门槛全部通过，软性匹配良好，建议重点准备面试并针对性补强薄弱项。";
+  } else {
+    label = "补软性短板"; summary = "硬性门槛通过，软性仍有提升空间，可边投递边针对性补强。";
+  }
+
+  const P = PROFILE || {};
+  const C = candidateInfo();
+  // 亮点：仅使用画像中真实存在的内容
+  const highlights = [];
+  (P.projects || []).forEach(p=>{
+    const brief = (p.bullets && p.bullets.length) ? p.bullets[0] : (p.meta || '');
+    highlights.push(`${p.title}：${brief ? brief.slice(0,40) : '项目经历'}`);
+  });
+  if(C.topSkills) highlights.push(`核心技能：${C.topSkills}`);
+  if(P.school || P.major) highlights.push(`教育背景：${[P.school, P.degree, P.major].filter(Boolean).join(' · ')}`);
+  const aiHas = profileHas(P, ["AI","大模型","Agent","智能体","LLM","ChatGPT","DeepSeek","提示词","机器学习"]);
+  if(aiHas && /AI|大模型|Agent|智能|算法|机器学习|数据/.test(jd))
+    highlights.push("具备 AI 工具 / 大模型实战经验，可快速迁移到 AI 工作流场景");
+
+  const risks = [];
+  const weakText = (P.weaknesses || []).join("、");
+  if(/沟通|表达|宣讲|售前|客户|商务|谈判|需求|产品|运营/.test(jd) && /沟通|表达|演讲|汇报|口才|不自信/.test(weakText + " " + (P.negText||"")))
+    risks.push(`沟通表达是自评短板（${weakText.slice(0,24)}），恰是售前/产品/需求岗核心能力，需重点训练`);
+  if(!(P.exps && P.exps.length))
+    risks.push("背景中未见正式实习/工作经历，需用项目经历与学习能力弥补");
+  else risks.push("与目标岗位直接相关的全职经验较少，需用项目成果证明能力");
+  if(hardFails.length) risks.push(`核心技能硬性缺口：${hardFails.map(g=>g.req).join("、")}`);
+
+  const focus = [];
+  if(C.topProject) focus.push(`《${C.topProject}》的技术选型与实现细节，以及你在其中的具体贡献`);
+  if(C.topExp) focus.push(`《${C.topExp}》中的真实产出与可量化结果`);
+  if(/沟通|售前|客户|商务|宣讲|产品|需求/.test(jd)) focus.push("结构化表达：现场用 1 分钟向非技术背景的人讲清一个专业概念");
+  const missTech = TECH_REQS.filter(t=>t.kws.some(k=>jd.includes(k)) && !techHas(t)).slice(0,1);
+  missTech.forEach(t=>focus.push(`${t.label} 的基础概念与场景应用（JD 要求但当前薄弱）`));
+  focus.push(`${job} 的岗位职责理解与「为什么你能胜任」`);
+
+  return {
+    ver:"ai-eval-v1", job, match_pct:match, gate, soft,
+    verdict:{ok, label, summary},
+    highlights: highlights.slice(0,3),
+    risks: risks.slice(0,3),
+    interview_focus: focus.slice(0,4),
+  };
+}
+
+function onSmartJobChange(){
+  const custom = document.getElementById('smartJob').value === "__custom";
+  document.getElementById('smartJobCustom').style.display = custom ? "" : "none";
+}
+
+function startSmartEval(){
+  const sel = document.getElementById('smartJob').value;
+  const job = sel === "__custom" ? (document.getElementById('smartJobCustom').value.trim() || "目标岗位") : sel;
+  const jd = document.getElementById('smartJd').value.trim();
+  if(!jd){ alert("请先粘贴岗位 JD"); return; }
+  if(!PROFILE){
+    alert("请先在「总览 · 求职者画像」上传简历/背景文件或输入求职者背景，AI 才能基于你的真实经历做匹配评估。");
+    switchTab('overview'); return;
+  }
+
+  const loading = document.getElementById('smartLoading');
+  const msg = document.getElementById('smartLoadingMsg');
+  document.getElementById('smartResult').classList.add('hidden');
+  loading.classList.remove('hidden');
+  loading.scrollIntoView({behavior:'smooth', block:'center'});
+
+  const stages = ["解析 JD 能力要求…","判定硬性门槛…","评估软性增量…","生成匹配报告…"];
+  let i=0; msg.textContent = stages[0];
+  const t = setInterval(()=>{ i++; if(i<stages.length) msg.textContent = stages[i]; }, 320);
+  setTimeout(()=>{
+    clearInterval(t);
+    loading.classList.add('hidden');
+    renderSmartEval(runAiEval(job, jd));
+  }, 320*stages.length + 250);
+}
+function smartLoadSample(){
+  document.getElementById('smartJob').value = "安全售前工程师";
+  onSmartJobChange();
+  document.getElementById('smartJd').value =
+`岗位：安全售前工程师
+职责：负责安全解决方案售前技术交流、方案设计与宣讲；招投标标书撰写与应标；客户需求挖掘与方案输出；配合销售完成 PoC 与答疑。
+要求：本科及以上，网安/计算机相关专业；熟悉等保、防火墙、WAF 等安全产品；了解渗透测试与漏洞者优先；沟通表达与文档撰写能力强；熟练 Office/PPT，有 CISP/NISP 优先。`;
+  document.getElementById('smartResult').classList.add('hidden');
+  document.getElementById('smartLoading').classList.add('hidden');
+}
+
+function renderSmartEval(d){
+  document.getElementById('smartResult').classList.remove('hidden');
+  const n = document.getElementById('smartEvalNotice');
+  if(n){
+    n.classList.remove('hidden'); n.className = "notice";
+    n.innerHTML = `✅ AI 评估完成：<b>${d.job||''}</b> · 匹配度 <b>${d.match_pct}%</b> · 结论「${d.verdict.label||''}」`;
+  }
+
+  // 判定结果卡
+  const ok = !!d.verdict.ok;
+  const vc = document.getElementById('smartVerdict');
+  vc.innerHTML = `<div class="score-wrap">
+      <div class="big-score" style="color:${d.match_pct>=80?'var(--green)':d.match_pct>=60?'var(--orange)':'var(--red)'}">${d.match_pct}%</div>
+      <div style="flex:1"><div class="bar"><i style="width:${d.match_pct}%;background:${d.match_pct>=80?'var(--green)':d.match_pct>=60?'var(--orange)':'var(--red)'}"></i></div>
+      <div class="small mt8" style="color:${d.match_pct>=80?'var(--green)':d.match_pct>=60?'var(--orange)':'var(--red)'};font-weight:700">判定：${d.verdict.label||''} ${ok?'✅':'⛔'}</div></div></div>
+    <div class="muted small mt16">${d.verdict.summary||''}</div>`;
+
+  // 硬性门槛
+  const gate = d.gate||[];
+  document.getElementById('smartGate').innerHTML = gate.length? `<table class="dim-table"><thead><tr><th>硬性要求</th><th>类型</th><th>你的证据</th><th>判定</th></tr></thead><tbody>${
+    gate.map(g=>`<tr><td><b>${esc(g.req)}</b></td><td>${esc(g.type||'')}</td><td class="small">${esc(g.evidence||'')}</td><td>${g.pass?'<span class="pill ok">✅ 满足</span>':'<span class="pill low">❌ 不满足</span>'}</td></tr><tr style="border:none"><td colspan="4" class="small muted" style="padding-top:0">${esc(g.note||'')}</td></tr>`).join('')}
+    </tbody></table>` : '<div class="small muted">AI 未拆分硬性门槛。</div>';
+
+  // 软性增量
+  const soft = d.soft||[];
+  document.getElementById('smartSoft').innerHTML = soft.length? `<table class="dim-table"><thead><tr><th>软性能力</th><th>评分</th><th>证据/评价</th><th>提升建议</th></tr></thead><tbody>${
+    soft.map(s=>`<tr><td><b>${esc(s.dim)}</b></td><td><b style="color:${s.score>=7?'var(--green)':s.score>=5?'var(--orange)':'var(--red)'}">${s.score}/10</b></td><td class="small">${esc(s.evidence||'')}<br><span class="muted">${esc(s.note||'')}</span></td><td class="small">${esc(s.plan||'')}</td></tr>`).join('')}
+    </tbody></table>` : '<div class="small muted">AI 未拆分软性能力。</div>';
+
+  // 匹配评估汇总
+  document.getElementById('smartFit').innerHTML = `
+    <div class="small" style="line-height:1.9">
+      <b>✨ 亮点</b><ul style="padding-left:18px;margin:4px 0">${(d.highlights||[]).map(h=>`<li>${esc(h)}</li>`).join('')}</ul>
+      <b>⚠️ 风险/短板</b><ul style="padding-left:18px;margin:4px 0">${(d.risks||[]).map(h=>`<li>${esc(h)}</li>`).join('')}</ul>
+      <b>🎯 面试重点准备</b><ul style="padding-left:18px;margin:4px 0">${(d.interview_focus||[]).map(h=>`<li>${esc(h)}</li>`).join('')}</ul>
+    </div>`;
+
+  // 记录供出题引用
+  window.__aiEval = d;
+  localStorage.setItem('aiEval', JSON.stringify(d));
+  document.getElementById('smartResult').scrollIntoView({behavior:'smooth'});
+}
+
+/* ================= AI 动态出题 ================= */
+/* AI 结果契约 ver:"ai-interview-v1":
+{ ver:"ai-interview-v1", job:"岗位", questions:[
+  {cat:"技术概念", q:"题目", why:"为何针对这位求职者/该JD", hint:"参考要点/答题框架", depth:"追问方向"}
+] } */
+/* 各岗位出题上下文（用于生成针对性题目） */
+const JOB_CTX = {
+  "安全售前工程师": {tech:["等保 2.0","防火墙/WAF","渗透测试","售前方案"], core:"售前技术交流与方案宣讲", scenario:"向一个完全不懂技术的客户解释「为什么需要买我们的安全产品」"},
+  "安全产品经理": {tech:["等保 2.0","云安全","数据安全","产品原型"], core:"安全产品规划与需求梳理", scenario:"为一款安全产品设计一个新功能"},
+  "需求分析师": {tech:["需求调研","业务流程建模","PRD 撰写"], core:"需求拆解与规格说明", scenario:"把一个模糊的客户需求转化为清晰的 PRD"},
+  "互联网产品经理": {tech:["用户研究","竞品分析","原型设计","数据分析"], core:"用户研究与产品设计", scenario:"判断用户真正需要什么功能"},
+  "AI应用管培生": {tech:["大模型","Agent 工作流","提示词","机器学习"], core:"AI 产品落地与 Agent 工作流搭建", scenario:"用 Agent 解决一个真实的业务场景问题"},
+};
+
+function genAiInterview(){
+  if(!PROFILE){
+    alert("动态出题需要你的真实经历。请先在「总览 · 求职者画像」上传简历/背景文件或输入背景信息。");
+    switchTab('overview'); return;
+  }
+  const job = document.getElementById('ivGenJob').value;
+  const extra = document.getElementById('ivExtraReq').value.trim();
+  document.getElementById('ivJob').value = job; // 同步到模拟器
+  const ctx = JOB_CTX[job] || {tech:["岗位核心技能"], core:"岗位核心职责", scenario:"一个典型业务场景"};
+  // 读取智能评估结果（若有），增强针对性
+  let evalInfo = null; try{ evalInfo = JSON.parse(localStorage.getItem('aiEval')||'null') }catch(e){}
+  const missTech = (evalInfo && evalInfo.gate ? evalInfo.gate.filter(g=>!g.pass).map(g=>g.req) : []).concat(ctx.tech);
+
+  const P = PROFILE;
+  const P1 = (P.projects && P.projects[0]) ? P.projects[0] : null;
+  const P2 = (P.projects && P.projects[1]) ? P.projects[1] : null;
+  const E1 = (P.exps && P.exps[0]) ? P.exps[0] : null;
+  const W1 = (P.weaknesses && P.weaknesses[0]) ? P.weaknesses[0] : '';
+  const skillBrief = (P.skillTags || []).slice(0,4).join('、') || '你的技术栈';
+
+  const Q = [];
+  Q.push({cat:"自我介绍", q:`请用 1 分钟介绍你自己，重点说明你与「${job}」最匹配的 2-3 个能力点。`,
+    why:`开场题，检验你能否把自身经历（${skillBrief}）与「${ctx.core}」对上，而不是照背简历。`,
+    hint:`用「岗位需要 X → 我有 X（证据）」结构：每条能力点都要带一个具体项目/经历做证据。控制在 60-90 秒。`,
+    depth:"追问：与其他应聘者相比，你最大的差异化优势是什么？"});
+  if(P1){
+    Q.push({cat:"技术概念", q:`你的项目「${P1.title}」${P1.bullets && P1.bullets[0] ? '涉及' + P1.bullets[0].slice(0,18) : ''}，请用通俗语言解释它的核心原理与解决的问题。`,
+      why:`深挖你最硬的项目，同时考察能否把技术讲清楚——这正是 ${job} 与同事/客户沟通的底层能力。`,
+      hint:`按「痛点（为什么要做）→ 机制（核心技术如何运作）→ 你的落地（你在其中负责什么、结果如何）」三层讲。`,
+      depth:"追问：这个方案有什么局限？如果重做一次你会怎么改进？"});
+  }
+  Q.push({cat:"技术概念", q:`${job} 常会用到「${missTech[0]||ctx.tech[0]}」，你对它了解多少？说说原理与应用场景。`,
+    why:`JD 提及但你当前薄弱的项，考察你的知识边界与临场应变。`,
+    hint:`即使不熟也按「定义 → 解决什么问题 → 应用场景」框架作答，并诚实说明这是你在补的短板、已开始学哪些资料。`,
+    depth:"追问：给你一周时间，你会怎么快速上手这一块？"});
+  const dig = P2 || P1;
+  if(dig){
+    Q.push({cat:"简历深挖", q:`你做过「${dig.title}」，它具体解决了什么问题？你是怎么设计的？`,
+      why:`最能体现你「需求拆解 + 落地执行」能力的项目，与 ${job} 高度相关。`,
+      hint:`按 STAR：情境（什么痛点）→ 任务（要达成什么）→ 行动（你具体做了什么）→ 结果（可量化的产出）。`,
+      depth:"追问：把它做成真正的产品，你会先加什么功能？"});
+  }
+  if(E1){
+    Q.push({cat:"简历深挖", q:`在「${E1.title}」这段经历里，你如何判断自己做得好不好？`,
+      why:`检验你是否真有数据驱动 / 结果导向的意识，而非只写了个抬头。`,
+      hint:`先给出 2-3 个你实际关注的指标，再用具体数字说明结果；说不清指标时，就讲你如何复盘改进。`,
+      depth:"追问：如果结果不达预期，你判断是「方向问题」还是「执行问题」？怎么做？"});
+  }
+  if(W1){
+    Q.push({cat:"行为面试", q:`你提到自己在「${W1.slice(0,14)}」上还有不足，若面试官当场让你用 1 分钟讲清一个方案，你如何应对？`,
+      why:`正面触及你自评的短板，考察自知与改进策略（压力题）。`,
+      hint:`先承认短板 → 再讲应对（先结论后展开、结构化框架、必要时写下来）→ 给出已在刻意练习的证据。`,
+      depth:`追问：现场用 30 秒，把「${ctx.scenario}」讲给外行听。`});
+  }
+  Q.push({cat:"产品思维", q:`${ctx.scenario}，你会怎么做？`,
+    why:`考察你是否具备 ${job} 的核心思维（痛点→方案→验证），而非空谈。`,
+    hint:`按四步：① 明确目标用户与真实痛点；② 现状/竞品调研；③ 用 AI 辅助快速产出方案/原型；④ 设计验收指标。`,
+    depth:"追问：资源有限只能先做一个功能，你选哪个？为什么？"});
+  Q.push({cat:"职业规划", q:`你为什么想从事「${job}」？未来 3 年怎么规划？`,
+    why:`考察求职动机与稳定性，判断你是否真的想清楚了这个方向。`,
+    hint:`三层：兴趣（对 AI/安全/产品持续探索）→ 能力（技术背景+需求拆解+AI 工具）→ 价值（从 AI 使用者成长为工作流设计者）。`,
+    depth:"追问：若入职后发现和想象差距很大，你会怎么调整？"});
+
+  renderAiQuestions({ver:"ai-interview-v1", job, questions: Q});
+}
+let __aiQuestions = [];
+function renderAiQuestions(d){
+  __aiQuestions = d.questions || [];
+  if(!__aiQuestions.length){ alert("题目为空"); return; }
+  // 追加到题库浏览区，标记为"AI 智能题"
+  document.getElementById('ivList').innerHTML = __aiQuestions.map((i,idx)=>`
+    <div class="q-item" style="border-color:var(--primary);border-left:4px solid var(--primary)">
+      <div style="display:flex;justify-content:space-between;gap:8px">
+        <div style="font-size:11px;font-weight:700;color:var(--primary);background:var(--primary-soft);padding:1px 8px;border-radius:12px;align-self:flex-start">🧠 AI 动态题</div>
+        <span style="font-size:11px;color:var(--muted)">${d.job||''}</span>
+      </div>
+      <div class="q mt8">${esc(i.q)}</div>
+      <div class="small mt4" style="color:var(--primary)"><b>🎯 为什么问这题：</b>${esc(i.why||'')}</div>
+      <div class="row mt8"><button class="btn ghost" onclick="toggleAns(this)">💡 参考要点</button></div>
+      <div class="ans"><b>参考要点：</b><br>${esc(i.hint||'')}${i.depth?`<br><br><b>可能的追问：</b>${esc(i.depth)}`:''}</div>
+    </div>`).join('');
+  // 切换到题库浏览卡片附近
+  const listCard = document.getElementById('ivList').closest('.card');
+  listCard.scrollIntoView({behavior:'smooth'});
+}
+
+
+function switchTab(tab){
+  document.querySelectorAll('#nav a').forEach(a=>a.classList.toggle('active', a.dataset.tab===tab));
+  document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active', p.id==='page-'+tab));
+  window.scrollTo({top:0});
+}
+document.querySelectorAll('#nav a').forEach(a=>a.addEventListener('click',()=>switchTab(a.dataset.tab)));
+
+// 表单联动
+['f-job','f-name','f-phone','f-email','f-city','f-arrive','f-edu','f-skill','f-project','f-exp','f-eval'].forEach(id=>{
+  document.getElementById(id).addEventListener('input', renderResume);
+});
+
+/* —— 求职者画像：上传 / 拖拽 / 输入 交互 —— */
+(function bindProfileInput(){
+  const drop = document.getElementById('pmDrop');
+  const file = document.getElementById('pmFile');
+  drop.addEventListener('click', ()=> file.click());
+  file.addEventListener('change', e=>{ if(e.target.files && e.target.files[0]) handleProfileFile(e.target.files[0]); });
+  ['dragenter','dragover'].forEach(ev=> drop.addEventListener(ev, e=>{ e.preventDefault(); drop.classList.add('over'); }));
+  ['dragleave','drop'].forEach(ev=> drop.addEventListener(ev, e=>{ e.preventDefault(); drop.classList.remove('over'); }));
+  drop.addEventListener('drop', e=>{
+    const f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+    if(f) handleProfileFile(f);
+  });
+  document.getElementById('pmText').addEventListener('input', ()=>{ /* 手动输入时不自动覆盖画像，需点击提取 */ });
+})();
+
+// 初始化
+initProfile();
+initResume();
+renderInterview();
+// 恢复 JD 草稿
+const savedJD = localStorage.getItem('jdText');
+if(savedJD) document.getElementById('jdText').value = savedJD;
+document.getElementById('jdText').addEventListener('input', e=>localStorage.setItem('jdText', e.target.value));
+</script>
+</body>
+</html>
